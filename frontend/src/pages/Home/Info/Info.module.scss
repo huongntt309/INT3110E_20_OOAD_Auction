@@ -1,0 +1,8 @@
+.card {
+    width: calc(25% - 20px);
+
+    &:hover {
+        border: 1px solid var(--primary);
+        box-shadow: 0 4px 20px var(--shadow-color);
+    }
+}

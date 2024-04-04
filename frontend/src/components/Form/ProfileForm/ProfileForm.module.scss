@@ -1,0 +1,16 @@
+.form-header {
+    font-size: 1.8rem;
+    color: var(--primary);
+}
+
+.form-input {
+    height: var(--input-height);
+    border: 1px solid var(--border-color);
+}
+
+.form-radio {
+    & input {
+        width: 16px;
+        height: 16px;
+    }
+}

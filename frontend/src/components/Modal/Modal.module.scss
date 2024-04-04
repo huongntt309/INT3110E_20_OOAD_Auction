@@ -1,0 +1,16 @@
+.wrapper {
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999999;
+}
+
+.container {
+    left: 50%;
+    top: 50%;
+    min-width: 500px;
+    max-height: 90%;
+    transform: translate(-50%, -50%);
+    background-color: var(--white);
+    border-radius: 8px;
+    overflow-y: overlay;
+}
+

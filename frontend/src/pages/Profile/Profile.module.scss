@@ -1,0 +1,47 @@
+.user-image {
+    margin-right: 20px;
+    width: 116px;
+    height: 116px;
+    border-radius: 50%;
+}
+
+.user-name {
+    font-size: 3.2rem;
+    line-height: 3.8rem;
+}
+
+.user-role {
+    margin-top: 4px;
+    font-size: 1.8rem;
+    line-height: 2.4rem;
+}
+
+.edit-btn {
+    display: flex;
+    align-items: center;
+    padding: 6px 16px;
+    width: fit-content;
+    border: 1px solid var(--border-color);
+    font-size: 1.6rem;
+
+    &:hover {
+        background-color: #f7f7f7;
+    }
+}
+
+.info-header {
+    margin: 24px 0 10px;
+    text-transform: uppercase;
+    color: var(--primary);
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.info-data,
+.info-data:has(input:focus) {
+    border: none !important;
+}
+
+.input-wrapper {
+    margin-bottom: 10px;
+}
