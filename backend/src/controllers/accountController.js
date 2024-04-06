@@ -79,9 +79,50 @@ const handleCreateTable = async (req, res) => {
     }
 }
 
-module.exports = { 
+// Hàm xử lý lấy danh sách tất cả người dùng
+const handleGetAllUsers = async (req, res) => {
+    try {
+        const users = await getAllAccounts();
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error getting all users:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// Hàm xử lý lấy thông tin một người dùng dựa trên id
+const handleGetUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await getAccountByPhoneNumber(id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Error getting user by id:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// Hàm xử lý xóa người dùng dựa trên id
+const handleDeleteUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await deleteAccount(id);
+        res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting user by id:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+module.exports = {
     handleCreateNewAccount,
     handleLogin,
     handleLogout,
     handleCreateTable,
+    handleGetAllUsers,
+    handleGetUserById,
+    handleDeleteUserById,
 }
