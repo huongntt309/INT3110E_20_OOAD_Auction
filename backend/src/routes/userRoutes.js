@@ -7,5 +7,6 @@ const router = express.Router();
 // router.post('/taikhoan/dangki', taiKhoanController.handleNewUser);
 // router.get('/taikhoan/timkiem', taiKhoanController.getTaiKhoan);
 router.post('/sign-up', accountController.handleCreateNewAccount);
+// router.get('/create-table', accountController.handleCreateTable);
 
-export default userRouter;
+export default router;
