@@ -1,0 +1,34 @@
+.wrapper {
+    padding: 0 24px;
+    height: var(--customer-layout-header-height);
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border-color);
+}
+
+// Nav
+.header-link {
+    padding: 9px;
+    color: var(--black);
+    font-weight: 600;
+    border-radius: 4px;
+    transition: var(--linear);
+
+    &:not(:last-child) {
+        margin-right: 10px;
+    }
+    
+    &.active,
+    &:hover {
+        color: var(--primary);
+        background-color: var(--hover-color);
+    }
+}
+
+// Action
+.action-btn {
+    padding: 9px 16px;
+    
+    &:first-child {
+        color: var(--black);
+    }
+}

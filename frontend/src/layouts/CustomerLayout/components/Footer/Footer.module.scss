@@ -1,0 +1,25 @@
+.wrapper {
+    background-color: var(--black);
+    color: var(--white);
+}
+
+.header {
+    font-size: 2rem;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+.contact {
+    color: var(--primary);
+}
+
+.link {
+    &:hover {
+        color: var(--primary);
+    }
+}

@@ -1,0 +1,60 @@
+.wrapper {
+    &:not(.small).inline {
+        display: grid;
+        grid-template-columns: 80px auto;
+        margin-bottom: 24px;
+    }
+    
+    &.small.inline {
+        display: grid;
+        grid-template-columns: 50px auto;
+        margin-bottom: 24px;
+    }
+
+    &:not(.big).inline .label {
+        display: flex;
+        align-items: center;
+        margin-right: 8px;
+        height: 100%;
+    }
+
+    &.inline .container {
+        margin: 0;
+    }
+
+    // textarea
+    &.big .container {
+        height: fit-content;
+    }
+
+    &.big.inline .label {
+        margin-top: 10px;
+    }
+
+    &.big .input {
+        overflow-y: overlay;
+    }
+}
+
+.container {
+    display: flex;
+    background-color: var(--white);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+
+    &:has(.input[type=radio], 
+        .input[type=checkbox], 
+        .input[type=radio]:focus, 
+        .input[type=checkbox]:focus) {
+        border:none;
+    }
+
+    &:has(.input:focus) {
+        border: 1px solid var(--primary);
+    }
+}
+
+.input {
+    padding: 10px;
+}
