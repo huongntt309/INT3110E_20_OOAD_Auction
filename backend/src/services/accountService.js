@@ -93,7 +93,7 @@ async function login(phone_number, password) {
         }
         // Kiểm tra mật khẩu
         if (account.password === password) {
-            return true; // Đăng nhập thành công
+            return account; // Đăng nhập thành công
         } else {
             return false; // Sai mật khẩu
         }

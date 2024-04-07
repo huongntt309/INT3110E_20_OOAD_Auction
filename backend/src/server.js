@@ -2,8 +2,10 @@ import express from "express";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 require("dotenv").config();
-import userRoutes from "./routes/userRoutes";
+import accountRoutes from "./routes/accountRoutes";
 import auctionRoutes from "./routes/auctionRoutes";
+import bidRoutes from "./routes/bidRoutes";
+import paymentRoutes from "./routes/paymentRoutes";
 
 const app = express();
 
@@ -15,8 +17,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Cài đặt các API routes
-app.use("/api/v1", userRoutes);
+app.use("/api/v1", accountRoutes);
 app.use("/api/v1", auctionRoutes);
+app.use("/api/v1", bidRoutes);
+app.use("/api/v1", paymentRoutes);
 
 // Khai báo db như một biến global
 global.db = null;

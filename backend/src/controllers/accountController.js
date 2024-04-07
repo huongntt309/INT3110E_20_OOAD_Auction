@@ -9,6 +9,11 @@ import {
     login,
 } from '../services/accountService';
 
+const jwt = require("jsonwebtoken");
+
+const createToken = (user) => {
+    return jwt.sign({ user: user }, process.env.SECRET, { expiresIn: "20d" });
+};
 const handleCreateNewAccount = async (req, res) => {
     try {
         const { phone_number, password, role, first_name, last_name, dob, address } = req.body;
@@ -44,10 +49,12 @@ const handleLogin = async (req, res) => {
         // Gọi hàm đăng nhập từ db
         // (chưa biết cách xử lý đăng nhập trong db của bạn, hãy thay thế login bằng hàm thích hợp)
         const loggedIn = await login(phone_number, password);
-        if (loggedIn) {
-            res.status(200).json({ message: 'Login successful' });
-        } else {
+        if (loggedIn == false) {
             res.status(401).json({ error: 'Invalid credentials' });
+        } else {
+            const user = loggedIn
+            const token = createToken(user);
+            return res.status(200).json({ user: user, token: token });
         }
     } catch (error) {
         console.error('Error logging in:', error);

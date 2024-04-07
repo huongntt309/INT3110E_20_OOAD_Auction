@@ -39,7 +39,7 @@ async function getAuctionById(auctionId) {
         return auctionWithPlate;
     } catch (error) {
         console.error('Error getting auction:', error);
-    }
+    }     
 };
 
 // Đọc tất cả các phiên đấu giá
