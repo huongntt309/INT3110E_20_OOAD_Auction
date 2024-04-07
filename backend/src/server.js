@@ -1,31 +1,47 @@
-import mongoose from "mongoose";
 import express from "express";
+import sqlite3 from "sqlite3";
+import { open } from "sqlite";
 require("dotenv").config();
-import apiRoutes from "./routes/apiRoutes";
+import accountRoutes from "./routes/accountRoutes";
+import auctionRoutes from "./routes/auctionRoutes";
+import bidRoutes from "./routes/bidRoutes";
+import paymentRoutes from "./routes/paymentRoutes";
 
 const app = express();
 
 const port = process.env.PORT || 8081;
-const dbPassword = process.env.DB_PASSWORD;
+const dbPath = process.env.DB_PATH; // Đường dẫn tới file SQLite
 
-// get data
-app.use(express.json()); // for json
-app.use(express.urlencoded({ extended: true })); // for form data
+// Middleware để xử lý dữ liệu
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-//apis
-app.use( "/api/v1", apiRoutes);
+// Cài đặt các API routes
+app.use("/api/v1", accountRoutes);
+app.use("/api/v1", auctionRoutes);
+app.use("/api/v1", bidRoutes);
+app.use("/api/v1", paymentRoutes);
 
+// Khai báo db như một biến global
+global.db = null;
+
+// Khai báo hàm async để chạy ứng dụng
 (async function () {
   try {
-    //connect to database
-    await mongoose.connect(
-      `mongodb+srv://magicpost:${dbPassword}@cluster0.90ifdb2.mongodb.net/?retryWrites=true&w=majority`
-    ).then(() => console.log("Connected to MongoDB"));
+    // Mở kết nối tới cơ sở dữ liệu SQLite
+    global.db = await open({
+      filename: dbPath,
+      driver: sqlite3.Database,
+    });
 
+    console.log("Connected to SQLite");
+
+    // Bắt đầu server
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error connecting to SQLite:", error);
   }
 })();
+
