@@ -74,7 +74,7 @@ function Info() {
                         >
                             {Array.from({ length: 7 }, (arr, index) => (
                                 <Card className={cx('grow-0 shrink-0 mx-4', 'card')} key={index}>
-                                    <div className={'flex flex-col items-center border-[4px] border-solid border-[var(--black)] aspect-[2/1] rounded-[4px]'}>
+                                    <div className='flex flex-col justify-center items-center border-[4px] border-solid border-[var(--black)] aspect-[2/1] rounded-[4px]'>
                                         <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{ITEM.number.split('-').shift()}</div>
                                         <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{ITEM.number.split('-').pop()}</div>
                                     </div>
@@ -94,7 +94,7 @@ function Info() {
                                         </div>
                                     </div>
                                     <div className='flex flex-col items-center mt-4'>
-                                        <Button className='flex justify-center p-[9px_16px] mt-4 w-full' to={config.routes.products} primary>Đăng ký đấu giá</Button>
+                                        <Button className='flex justify-center p-[9px_16px] mt-4 w-full' to={config.routes.room} state={ITEM} primary>Đăng ký đấu giá</Button>
                                         <Button className='mt-4 text-[var(--primary)] font-normal' onClick={() => showDetail(ITEM)}>Xem thông tin chi tiết biển số</Button>
                                     </div>
                                 </Card>

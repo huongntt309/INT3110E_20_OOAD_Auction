@@ -58,7 +58,7 @@ function Header() {
                     <NavItem className={cx('header-link')} to={config.routes.home} title='Trang chủ' />
                     {/* <NavItem className={cx('header-link')} to={'/a'} title='Danh sách công bố' /> */}
                     <NavItem className={cx('header-link')} to={config.routes.products} title='Danh sách chính thức' />
-                    <NavItem className={cx('header-link')} to={'/a'} title='Phòng đấu giá' />
+                    <NavItem className={cx('header-link')} to={config.routes.room} title='Phòng đấu giá' />
                     <NavItem className={cx('header-link')} to={config.routes.result} title='Kết quả đấu giá' />
                     <NavItem className={cx('header-link')} to={'/a'} title='Thông báo' />
                 </div>

@@ -6,6 +6,7 @@ import Card from '~/components/Card';
 import Button from '~/components/Button';
 import Modal from "~/components/Modal";
 import PlateDetail from "~/components/Form/PlateDetail";
+import config from '~/config';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 
@@ -44,7 +45,7 @@ function Products() {
             <div className='grid grid-cols-4 gap-8'>
                 {Array.from({ length: 12 }, (arr, index) => (
                     <Card className={cx('card')} key={index}>
-                        <div className={'flex flex-col items-center border-[4px] border-solid border-[var(--black)] aspect-[2/1] rounded-[4px]'}>
+                        <div className='flex flex-col justify-center items-center border-[4px] border-solid border-[var(--black)] aspect-[2/1] rounded-[4px]'>
                             <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{ITEM.number.split('-').shift()}</div>
                             <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{ITEM.number.split('-').pop()}</div>
                         </div>
@@ -64,7 +65,7 @@ function Products() {
                             </div>
                         </div>
                         <div className='flex flex-col items-center mt-4'>
-                            <Button className='p-[9px_16px] mt-4 w-full' primary>Đăng ký đấu giá</Button>
+                            <Button className='p-[9px_16px] mt-4 w-full' to={config.routes.room} state={ITEM} primary>Đăng ký đấu giá</Button>
                             <Button className='mt-4 text-[var(--primary)] font-normal' onClick={() => showDetail(ITEM)}>Xem thông tin chi tiết biển số</Button>
                         </div>
                     </Card>
