@@ -6,12 +6,16 @@ import Input from '~/components/Input';
 import Button from '~/components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import * as authService from '~/services/authService';
 
 const cx = classNames.bind(styles);
 
 function LogIn() {
     const [inputs, setInputs] = useState({
-        email: '',
+        mobile: '',
         password: '',
     });
     const [showPassword, setShowPassword] = useState(false);
@@ -27,14 +31,36 @@ function LogIn() {
     const handleShowPassword = () => {
         setShowPassword(!showPassword);
     }
+    
+    const inputPhone = (value) => {
+        value = value.replace(/[^0-9\s]/g, '');
+        value = value.replaceAll(' ', '');
+        const len = value.length;
+    
+        let count = 0;
+    
+        for (let i = 1; i <= ((len % 4 === 0) ? Math.floor(len / 4) - 1 : Math.floor(len / 4)); i++) {
+            const position = i * 4 + count;
+            value = `${value.slice(0, position)} ${value.slice(position)}`;
+            count++;
+        }
+    
+        return value;
+    }
+
+    const showToastMessage = (message, type='success') => toast[type](message);
 
     const validation = () => {
-        if (inputs.email === '') {
-            alert('Please enter your email!');
+        if (inputs.mobile === '') {
+            showToastMessage('Vui lòng nhập Số điện thoại!', 'error');
+            return false;
+        }
+        if (inputs.mobile.replaceAll(' ', '').length < 10) {
+            showToastMessage('Vui lòng nhập Số điện thoại hợp lệ!', 'error');
             return false;
         }
         if (inputs.password === '') {
-            alert('Please enter your password!');
+            showToastMessage('Vui lòng nhập Mật khẩu', 'error');
             return false;
         }
         return true;
@@ -42,23 +68,44 @@ function LogIn() {
 
     const handleSubmit = () => {
         if (validation()) {
-            alert('Login successfully!');
+            authService
+                .login(inputs.mobile, inputs.password)
+                .then((data) => {
+                    showToastMessage('Đăng nhập thành công', 'success');
+                })
         }
     }
 
     return (
         <div className={cx('wrapper')}>
             <div className='flex justify-center items-center h-full'>
+                <ToastContainer />
                 <div className={cx('flex flex-col justify-center w-2/5', 'form')}>
                     <h1 className={cx('form-header')}>Đăng nhập</h1>
                     <Input 
                         className={cx('form-input')}
                         type='text' 
-                        label='Email'
-                        placeholder='Email'
-                        name='email'
-                        value={inputs.email}
-                        onChange={handleInputChange}
+                        label='Số điện thoại'
+                        placeholder='Số điện thoại'
+                        name='mobile'
+                        value={inputs.mobile}
+                        onChange={(e) => {
+                            let { name, value } = e.target;
+                            value = inputPhone(value);
+
+                            if (value.replaceAll(' ', '').length <= 10) {
+                                setInputs((prev) => ({
+                                    ...prev,
+                                    [name]: value,
+                                }));
+                            }
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === ' ') {
+                                // Prevent press space key
+                                e.preventDefault();
+                            } 
+                        }}
                     />
                     <Input 
                         className={cx('form-input')}

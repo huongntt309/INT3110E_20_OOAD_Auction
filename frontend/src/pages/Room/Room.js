@@ -3,12 +3,14 @@ import { useLocation } from 'react-router-dom';
 
 import Input from '~/components/Input';
 import Button from '~/components/Button';
+import config from '~/config';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Room() {
     const location = useLocation();
     const item = location.state;
     const [bid, setBid] = useState('');
-    const [date, setDate] = useState(new Date());
     
     const inputCurrency = (value) => {
         value =  value.replace(/[^0-9\s]/g, '');
@@ -26,28 +28,31 @@ function Room() {
         return value;
     }
 
+    const showToastMessage = (message, type='success') => toast[type](message);
+
     const validation = () => {
         if (!item) {
-            alert('Please choose a plate to bid');
+            showToastMessage('Vui lòng chọn biển số để đấu giá!', 'error');
             return false;
         }
         if (bid === '') {
-            alert('Please enter your bid!');
+            showToastMessage('Vui lòng nhập Số tiền!', 'error');
             return false;
         }
         return true;
     }
 
     const handleSubmit = () => {
-        console.log('[ROOM]', item);
+        // console.log('[ROOM]', item);
         if (validation()) {
-            alert('Your bid has been submitted successfully!')
+            showToastMessage('Số tiền của bạn đã được ghi nhận!', 'success');
         }
     }
 
     return (
         <div className='px-32 py-16'>
             <div>
+                <ToastContainer />
                 <div className='grid grid-cols-[auto_45%] gap-16'>
                     <div className='px-32 py-8 min-h-[367px] rounded-[10px] shadow-[0_4px_20px_var(--shadow-color)]'>
                         <div className='mx-auto px-16 py-4 w-fit text-center border-[0px] border-[var(--primary)] rounded-[6px]'>
@@ -67,7 +72,8 @@ function Room() {
                             </div>
                         ) : (
                             <div className='flex flex-col justify-center items-center mt-16 mx-auto px-8 w-fit border-[4px] border-[var(--black)] aspect-[2/1] rounded-[6px]'>
-                                <h3>Vui lòng chọn biển số để đấu giá</h3>
+                                <h3 className='text-[20px]'>Vui lòng chọn biển số để đấu giá</h3>
+                                <Button className='mt-4 p-[9px_16px]' to={config.routes.products} primary>Chọn biển số</Button>
                             </div>
                         )}
                     </div>
