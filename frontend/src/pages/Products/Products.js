@@ -65,7 +65,7 @@ function Products() {
                             </div>
                         </div>
                         <div className='flex flex-col items-center mt-4'>
-                            <Button className='p-[9px_16px] mt-4 w-full' to={config.routes.room} state={ITEM} primary>Đăng ký đấu giá</Button>
+                            <Button className='flex justify-center p-[9px_16px] mt-4 w-full' to={config.routes.room} state={ITEM} primary>Đăng ký đấu giá</Button>
                             <Button className='mt-4 text-[var(--primary)] font-normal' onClick={() => showDetail(ITEM)}>Xem thông tin chi tiết biển số</Button>
                         </div>
                     </Card>

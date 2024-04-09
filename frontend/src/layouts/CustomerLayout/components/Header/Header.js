@@ -13,7 +13,7 @@ import { faUser, faArrowRightFromBracket } from "@fortawesome/free-solid-svg-ico
 const cx = classNames.bind(styles);
 
 function Header() {
-    const user = true;
+    const user = false;
     const MENU_ITEMS = [
         {
             icon: <FontAwesomeIcon icon={faUser}/>,
