@@ -1,13 +1,15 @@
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
-import { useState } from 'react';
 import styles from './LogIn.module.scss';
 
 import Input from '~/components/Input';
 import Button from '~/components/Button';
+import config from '~/config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+import { authUserContext } from '~/App';
 
 import * as authService from '~/services/authService';
 
@@ -15,10 +17,12 @@ const cx = classNames.bind(styles);
 
 function LogIn() {
     const [inputs, setInputs] = useState({
-        mobile: '',
+        phone_number: '',
         password: '',
     });
     const [showPassword, setShowPassword] = useState(false);
+    const context = useContext(authUserContext);
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -48,38 +52,49 @@ function LogIn() {
         return value;
     }
 
-    const showToastMessage = (message, type='success') => toast[type](message);
-
     const validation = () => {
-        if (inputs.mobile === '') {
-            showToastMessage('Vui lòng nhập Số điện thoại!', 'error');
+        if (inputs.phone_number === '') {
+            toast.error('Vui lòng nhập Số điện thoại!');
             return false;
         }
-        if (inputs.mobile.replaceAll(' ', '').length < 10) {
-            showToastMessage('Vui lòng nhập Số điện thoại hợp lệ!', 'error');
+        if (inputs.phone_number.replaceAll(' ', '').length < 10) {
+            toast.error('Vui lòng nhập Số điện thoại hợp lệ!');
             return false;
         }
         if (inputs.password === '') {
-            showToastMessage('Vui lòng nhập Mật khẩu', 'error');
+            toast.error('Vui lòng nhập Mật khẩu!');
             return false;
         }
         return true;
     }
 
     const handleSubmit = () => {
+        // console.log('[LOGIN]', inputs.phone_number.replaceAll(' ', ''), inputs.password);
         if (validation()) {
             authService
-                .login(inputs.mobile, inputs.password)
+                .login(
+                    inputs.phone_number.replaceAll(' ', ''), 
+                    inputs.password
+                )
                 .then((data) => {
-                    showToastMessage('Đăng nhập thành công', 'success');
+                    console.log('[LOGIN]', data);
+                    if (data) {
+                        toast.success('Đăng nhập thành công!');
+                        localStorage.setItem('user', JSON.stringify(data));
+                        context.handleAuthUser(data);
+                        setTimeout(() => {
+                            navigate(config.routes.home);
+                        }, 200);
+                    } else {
+                        toast.error('Sai số điện thoại hoặc mật khẩu!');
+                    }
                 })
         }
     }
 
     return (
-        <div className={cx('wrapper')}>
+        <div className='px-32 py-16'>
             <div className='flex justify-center items-center h-full'>
-                <ToastContainer />
                 <div className={cx('flex flex-col justify-center w-2/5', 'form')}>
                     <h1 className={cx('form-header')}>Đăng nhập</h1>
                     <Input 
@@ -87,8 +102,8 @@ function LogIn() {
                         type='text' 
                         label='Số điện thoại'
                         placeholder='Số điện thoại'
-                        name='mobile'
-                        value={inputs.mobile}
+                        name='phone_number'
+                        value={inputs.phone_number}
                         onChange={(e) => {
                             let { name, value } = e.target;
                             value = inputPhone(value);

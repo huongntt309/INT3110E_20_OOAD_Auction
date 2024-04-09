@@ -1,5 +1,5 @@
 import classNames from "classnames/bind";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styles from './Profile.module.scss';
 
 import Image from '~/components/Image';
@@ -9,31 +9,18 @@ import Modal from '~/components/Modal';
 import ProfileForm from '~/components/Form/ProfileForm';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import { authUserContext } from '~/App';
 
 const cx = classNames.bind(styles);
 
-const USER = {
-    _id: '1',
-    name: 'Nguyễn Văn A',
-    birthday: '06/04/2003',
-    gender: 'Nam',
-    role: 'area_manager',
-    work_place: 'Hà Nội',
-    phone: '0987 6543 21',
-    email: 'a@gmail.com',
-    password: '123',
-    created_at: '2024-01-26T',
-};
-
 function Profile() {
-    const [user, setUser] = useState(USER);
+    const context = useContext(authUserContext);
+    const user = context && context.authUser?.user;
     const [showModal, setShowModal] = useState(false);
 
     const displayRole = (role) => {
         return new Map([
-            ['boss', 'Lãnh đạo'],
-            ['area_manager', 'Quản lý khu vực'],
-            ['shop_manager', 'Quản lý quán'],
+            ['admin', 'Admin'],
         ]).get(role);
     }
 
@@ -56,15 +43,15 @@ function Profile() {
                     <Image 
                         className={cx('user-image')}
                         src={''}
-                        alt={user.name}
+                        alt='Avatar'
                     />
                     <div className='flex flex-col justify-between'>
                         <div>
                             <h3 className={cx('font-semibold', 'user-name')}>
-                                {user.name}
+                                {user && `${user.last_name} ${user.first_name}`}
                             </h3>
                             <h4 className={cx('user-role')}>
-                                {user.role && displayRole(user.role)}
+                                {user && user.role && displayRole(user.role)}
                             </h4>
                         </div>
                         <Button
@@ -86,23 +73,15 @@ function Profile() {
                             readOnly
                             inline
                             label='SĐT:'
-                            value={user.phone}
+                            value={user && user.phone_number}
                         />
                         <Input 
                             className={cx('info-data')}
                             wrapperClass={cx('input-wrapper')}
                             readOnly
                             inline
-                            label='Email:'
-                            value={user.email}
-                        />
-                        <Input 
-                            className={cx('info-data')}
-                            wrapperClass={cx('input-wrapper')}
-                            readOnly
-                            inline
-                            label='Cơ quan:'
-                            value={user.work_place}
+                            label='Địa chỉ:'
+                            value={user && user.address}
                         />
                     </div>
 
@@ -113,8 +92,8 @@ function Profile() {
                             wrapperClass={cx('input-wrapper')}
                             readOnly
                             inline
-                            label='Giới tính:'
-                            value={user.gender}
+                            label='Ngày sinh:'
+                            value={user && user.dob.split('-').reverse().join('/')}
                         />
                     </div>
                 </div>

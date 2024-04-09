@@ -13,7 +13,7 @@ const cx = classNames.bind(styles);
 
 function SignUp() {
     const [inputs, setInputs] = useState({
-        mobile: '',
+        phone_number: '',
         password: '',
         rePassword: '',
         checked: false,
@@ -45,31 +45,29 @@ function SignUp() {
         return value;
     }
 
-    const showToastMessage = (message, type='success') => toast[type](message);
-
     const validation = () => {
-        if (inputs.mobile === '') {
-            showToastMessage('Vui lòng nhập Số điện thoại!', 'error');
+        if (inputs.phone_number === '') {
+            toast.error('Vui lòng nhập Số điện thoại!');
             return false;
         }
-        if (inputs.mobile.replaceAll(' ', '').length < 10) {
-            showToastMessage('Vui lòng nhập Số điện thoại hợp lệ!', 'error');
+        if (inputs.phone_number.replaceAll(' ', '').length < 10) {
+            toast.error('Vui lòng nhập Số điện thoại hợp lệ!');
             return false;
         }
         if (inputs.password === '') {
-            showToastMessage('Vui lòng nhập Mật khẩu!', 'error');
+            toast.error('Vui lòng nhập Mật khẩu!');
             return false;
         }
         if (inputs.rePassword === '') {
-            showToastMessage('Vui lòng nhập Nhập lại mật khẩu!', 'error');
+            toast.error('Vui lòng nhập Nhập lại mật khẩu!');
             return false;
         }
         if (inputs.rePassword !== inputs.password) {
-            showToastMessage('Mật khẩu không khớp!', 'error');
+            toast.error('Mật khẩu không khớp!');
             return false;
         }
         if (inputs.checked === false) {
-            showToastMessage('Vui lòng đồng ý với điều khoản của chúng tôi!', 'error');
+            toast.error('Vui lòng đồng ý với điều khoản của chúng tôi!');
             return false;
         }
         return true;
@@ -77,7 +75,7 @@ function SignUp() {
 
     const handleSubmit = () => {
         if (validation()) {
-            showToastMessage('Đăng ký thành công!', 'success');
+            toast.success('Đăng ký thành công!');
         }
     }
 
@@ -92,8 +90,8 @@ function SignUp() {
                         type='text' 
                         label='Số điện thoại'
                         placeholder='Số điện thoại'
-                        name='mobile'
-                        value={inputs.mobile}
+                        name='phone_number'
+                        value={inputs.phone_number}
                         onChange={(e) => {
                             let { name, value } = e.target;
                             value = inputPhone(value);
