@@ -1,13 +1,13 @@
 import * as httpRequest from '~/utils/httpRequest';
 
-export const login = async (mobile, password) => {
+export const login = async (phone_number, password) => {
     try {
         const res = await httpRequest.post('login', {
-            mobile,
+            phone_number,
             password
         });
         return res;
     } catch (error) {
-        console.log(error)
+        console.log('[AUTH SERVICE]', error)
     }
 };

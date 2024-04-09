@@ -21,8 +21,8 @@ function Header({ title, onBack = () => {} }) {
     );
 }
 
-function MenuItem({ data, onClick = () => {} }) {
-    const classes = cx('relative block w-full','menu-item', { 
+function MenuItem({ className, data, onClick = () => {} }) {
+    const classes = cx('relative block w-full','menu-item', className, { 
         [`${data.className}`]: data.className,
     });
 
@@ -59,6 +59,7 @@ function Menu({
             return (
                 <div key={index}>
                     <MenuItem 
+                        className='flex'
                         data={item}
                         onClick={() => {
                             if (isParent) 
@@ -66,6 +67,7 @@ function Menu({
                             else
                                 onChange(item);
                         }}
+                        {...otherProps}
                     />
                 </div>
             );

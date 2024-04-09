@@ -12,6 +12,12 @@ const app = express();
 const port = process.env.PORT || 8081;
 const dbPath = process.env.DB_PATH; // Đường dẫn tới file SQLite
 
+const cors = require('cors');
+app.use(cors({
+    origin: '*',
+    credentials: true,
+}));
+
 // Middleware để xử lý dữ liệu
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

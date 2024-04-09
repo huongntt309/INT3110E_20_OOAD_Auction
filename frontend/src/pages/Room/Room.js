@@ -28,15 +28,13 @@ function Room() {
         return value;
     }
 
-    const showToastMessage = (message, type='success') => toast[type](message);
-
     const validation = () => {
         if (!item) {
-            showToastMessage('Vui lòng chọn biển số để đấu giá!', 'error');
+            toast.error('Vui lòng chọn biển số để đấu giá!');
             return false;
         }
         if (bid === '') {
-            showToastMessage('Vui lòng nhập Số tiền!', 'error');
+            toast.error('Vui lòng nhập Số tiền!');
             return false;
         }
         return true;
@@ -45,7 +43,7 @@ function Room() {
     const handleSubmit = () => {
         // console.log('[ROOM]', item);
         if (validation()) {
-            showToastMessage('Số tiền của bạn đã được ghi nhận!', 'success');
+            toast.success('Số tiền của bạn đã được ghi nhận!');
         }
     }
 
