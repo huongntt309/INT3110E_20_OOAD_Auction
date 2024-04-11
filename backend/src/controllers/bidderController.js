@@ -6,22 +6,34 @@ const {
     updateBid,
     deleteBid,
     getAllBids,
+    refreshBidWinner,
+    getAuctionIdByBidId,
+    getBidByAuctionIdAndUserPhoneNumber,
 } = require('../services/bidService');
 
 
 const handleCreateNewBid = async (req, res) => {
+    const { auction_id, user_phone_number, bid_price } = req.body;
+    const bid_status = 'PENDING';
+
     try {
-        const { auction_id, user_phone_number, bid_price } = req.body;
-        const bid_status = 'PENDING';
-        if (!auction_id || !user_phone_number || !bid_price) {
-            return res.status(400).json({ error: 'Missing required fields' });
+        // Kiểm tra xem (auction_id, user_phone_number) đã tồn tại chưa
+        const existingBid = await getBidByAuctionIdAndUserPhoneNumber(auction_id, user_phone_number);
+
+        if (existingBid) {
+            // Nếu đã tồn tại, thực hiện cập nhật bid
+            await updateBid(existingBid.bid_id, { bid_price, bid_status });
+            res.status(200).json({ message: 'Bid updated successfully' });
+        } else {
+            // Nếu chưa tồn tại, thực hiện thêm mới bid
+            await addBid({ auction_id, user_phone_number, bid_price, bid_status });
+            res.status(201).json({ message: 'Bid added successfully' });
         }
-        await addBid({ auction_id, user_phone_number, bid_price, bid_status });
-        res.status(201).json({ message: 'Bid added successfully' });
     } catch (error) {
-        console.error('Error creating bid:', error);
+        console.error('Error adding or updating bid:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+
 };
 
 // Hàm xử lý lấy thông tin của một bid dựa trên bid_id
@@ -67,6 +79,8 @@ const handleUpdateBid = async (req, res) => {
         const { id } = req.params;
         const newData = req.body;
         await updateBid(id, newData);
+        const auction_id = await getAuctionIdByBidId(id);
+        await refreshBidWinner(auction_id);
         res.status(200).json({ message: 'Bid updated successfully' });
     } catch (error) {
         console.error('Error updating bid:', error);
@@ -79,6 +93,8 @@ const handleDeleteABid = async (req, res) => {
     try {
         const { id } = req.params;
         await deleteBid(id);
+        const auction_id = await getAuctionIdByBidId(id);
+        await refreshBidWinner(auction_id);
         res.status(200).json({ message: 'Bid deleted successfully' });
     } catch (error) {
         console.error('Error deleting bid:', error);
