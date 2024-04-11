@@ -1,6 +1,6 @@
-const AUCTION_STATUS_OPEN = 'Open'
-const AUCTION_STATUS_CLOSED = 'Closed'
-const AUCTION_STATUS_WAIT_TO_OPEN = 'Pending'
+const AUCTION_STATUS_OPEN = 'Đang diễn ra'
+const AUCTION_STATUS_CLOSED = 'Đã kết thúc'
+const AUCTION_STATUS_WAIT_TO_OPEN = 'Chưa diễn ra'
 
 // Thêm một phiên đấu giá mới
 async function addAuction(auctionData) {
@@ -98,8 +98,6 @@ async function deleteAuction(auctionId) {
         console.error('Error deleting auction:', error);
     }
 }
-
-// TODO: set thời gian đóng mở 
 
 // cập nhật trạng thái cho auction status
 async function updateAuctionStatus(auctionId, newStatus) {
