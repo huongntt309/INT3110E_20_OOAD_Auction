@@ -1,3 +1,9 @@
+const PAYMENT_TYPE_PAYMENT = "Payment for bid winner"
+const PAYMENT_TYPE_DEPOSIT = "Deposit"
+const PAYMENT_STATUS_PENDING = "Pending" // waiting for admin verification
+const PAYMENT_STATUS_VERIFY = "Verify" // waiting for admin verification
+const PAYMENT_STATUS_REFUND = "Refund" // waiting for admin verification
+
 // Thêm một bid mới
 async function addBid(bidData) {
     const { auction_id, user_phone_number, bid_price, bid_status } = bidData;
@@ -113,6 +119,26 @@ async function refreshBidWinner(auction_id) {
     }
 }
 
+async function validateDeposit(bid_id) {
+    const query = `
+        SELECT COUNT(*) AS count
+        FROM payments
+        WHERE bid_id = ? 
+        AND payment_type = ${PAYMENT_TYPE_DEPOSIT} 
+        AND payment_status = ${PAYMENT_STATUS_VERIFY}
+    `;
+    try {
+        const result = await global.db.get(query, [bid_id]);
+        // If count is greater than 0, it means there's already a deposit for the bid
+        return result.count > 0;
+    } catch (error) {
+        console.error('Error validating deposit:', error);
+        return false;
+    }
+}
+
+
+
 export {
     addBid,
     getBidById,
@@ -123,4 +149,5 @@ export {
     getAuctionIdByBidId,
     getAllBidsByBidder,
     getBidByAuctionIdAndUserPhoneNumber,
+    validateDeposit
 };

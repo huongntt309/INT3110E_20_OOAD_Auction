@@ -9,6 +9,7 @@ const {
     refreshBidWinner,
     getAuctionIdByBidId,
     getBidByAuctionIdAndUserPhoneNumber,
+    validateDeposit,
 } = require('../services/bidService');
 
 
@@ -102,6 +103,20 @@ const handleDeleteABid = async (req, res) => {
     }
 }
 
+const handleCheckDeposit = async (req, res) => {
+    try {
+        console.log("handleCheckDeposit");
+        const { bid_id } = req.params;
+        const hasDeposit = await validateDeposit(bid_id);
+
+        // Send response based on whether the deposit exists or not
+        res.status(200).json({ hasDeposit });
+    } catch (error) {
+        console.error('Error checking deposit:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 
 module.exports = {
     handleGetAllBidsByAdmin,
@@ -110,4 +125,5 @@ module.exports = {
     handleGetAllBidsByBidder,
     handleUpdateBid,
     handleDeleteABid,
+    handleCheckDeposit,
 }
