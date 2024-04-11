@@ -6,44 +6,11 @@ import {
     deleteAuction,
     closeAuction,
     openAuction,
+    updateAllAuctionStatusByTime
 }
     from '../services/auctionService';
 
-const updateAuctionStatusByTime = async (auction_id, start_date, end_date) => {
-    const cron = require('node-cron');
-    const currentDate = new Date();
-    const startDate = new Date(start_date);
-    const endDate = new Date(end_date);
 
-    // Chuyển đổi startDate và endDate thành chuỗi thời gian dạng chuẩn
-    const startDateString = `${startDate.getMinutes()} ${startDate.getHours()} ${startDate.getDate()} ${startDate.getMonth() + 1} *`;
-    const endDateString = `${endDate.getMinutes()} ${endDate.getHours()} ${endDate.getDate()} ${endDate.getMonth() + 1} *`;
-
-    // if thời gian hiện tại < start_date
-    if (currentDate < startDate) {
-        cron.schedule(startDateString, async () => {
-            await openAuction(auction_id);
-            console.log('Auction opened at:', new Date());
-        });
-    }
-
-    // if thời gian hiện tại >= start_date
-    if (currentDate >= startDate) {
-        // if thời gian hiện tại =< end_date
-        if (currentDate <= endDate) {
-            // console.log(currentDate);
-            cron.schedule(endDateString, async () => {
-                await closeAuction(auction_id);
-                console.log('Auction closed at:', new Date());
-            });
-        }
-        // if thời gian hiện tại > end_date
-        else {
-            await closeAuction(auction_id);
-        }
-    }
-    console.log('Auction status update scheduled successfully.');
-}
 
 const auctionController = {
     // Xử lý yêu cầu lấy tất cả các phiên đấu giá
@@ -82,7 +49,7 @@ const auctionController = {
             const { plate_id, start_date, end_date, city, plate_type, vehicle_type } = auctionData;
             const newAuctionId = await addAuction(auctionData);
 
-            await updateAuctionStatusByTime(newAuctionId, start_date, end_date);
+            // await updateAuctionStatusByTime(newAuctionId, start_date, end_date);
             
             res.status(201).json({ message: 'Auction created successfully' });
         } catch (error) {

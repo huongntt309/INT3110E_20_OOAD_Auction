@@ -111,7 +111,6 @@ async function updateAuctionStatus(auctionId, newStatus) {
 
     try {
         await global.db.run(queryAuction, [newStatus, auctionId]);
-        console.log('Auction status updated successfully.');
     } catch (error) {
         console.error('Error updating auction status:', error);
     }
@@ -121,7 +120,7 @@ async function updateAuctionStatus(auctionId, newStatus) {
 async function closeAuction(auctionId) {
     try {
         await updateAuctionStatus(auctionId, AUCTION_STATUS_CLOSED);
-        console.log('Auction status updated successfully.');
+        console.log('Auction status closeAuction successfully.');
     } catch (error) {
         console.error('Error updating auction status:', error);
     }
@@ -131,7 +130,7 @@ async function closeAuction(auctionId) {
 async function openAuction(auctionId) {
     try {
         await updateAuctionStatus(auctionId, AUCTION_STATUS_OPEN);
-        console.log('Auction status updated successfully.');
+        console.log('Auction status openAuction successfully.');
     } catch (error) {
         console.error('Error updating auction status:', error);
     }
@@ -147,6 +146,42 @@ async function pendingAuction(auctionId) {
     }
 }
 
+async function updateAllAuctionStatusByTime() {
+    const currentDate = new Date();
+
+    try {
+        // Lấy danh sách tất cả phiên đấu giá từ cơ sở dữ liệu
+        const auctions = await getAllAuctions();
+
+        // Duyệt qua từng phiên đấu giá và cập nhật trạng thái
+        for (const auction of auctions) {
+            console.log(auction.auction_id);
+
+            const startDate = new Date(auction.start_date);
+            const endDate = new Date(auction.end_date);
+
+            // if thời gian hiện tại < start_date
+            if (currentDate < startDate) {
+                // thực ra là phải pendingAuctions nhưng ngay từ đầu đã pending r nên k cần
+                console.log(`${auction.auction_id} pending`);
+            }
+            // if thời gian hiện tại >= start_date
+            else if (currentDate >= startDate && currentDate <= endDate) {
+                // if thời gian hiện tại =< end_date
+                await openAuction(auction.auction_id);
+            }
+            // if thời gian hiện tại > end_date
+            else if (currentDate > endDate) {
+                await closeAuction(auction.auction_id);
+            }
+        }
+        console.log('Auction status update scheduled successfully.');
+    }
+
+    catch (error) {
+        console.error('Error updating auction status:', error);
+    }
+};
 
 export {
     addAuction,
@@ -158,4 +193,5 @@ export {
     closeAuction,
     openAuction,
     pendingAuction,
+    updateAllAuctionStatusByTime,
 };
