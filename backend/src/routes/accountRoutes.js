@@ -1,7 +1,6 @@
 import express from "express";
 
-const accountController = require('../controllers/accountController');
-const bidderController = require('../controllers/bidderController');
+const accountController = require('../controllers/accountController').default;
 
 const requireAuthAdmin = require("../middlewares/requireAuthAdmin");
 const requireAuthBidder = require("../middlewares/requireAuthBidder");

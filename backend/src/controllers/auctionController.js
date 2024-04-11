@@ -11,6 +11,8 @@ const auctionController = {
     // Xử lý yêu cầu lấy tất cả các phiên đấu giá
     handleGetAllAuctions: async (req, res) => {
         try {
+            const currentTime = new Date();
+            console.log(currentTime);
             const auctions = await getAllAuctions();
             res.status(200).json(auctions);
         } catch (error) {

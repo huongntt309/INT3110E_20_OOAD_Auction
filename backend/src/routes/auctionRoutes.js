@@ -1,6 +1,8 @@
 import express from "express";
 
 const auctionController = require('../controllers/auctionController').default;
+const requireAuthAdmin = require("../middlewares/requireAuthAdmin");
+const requireAuthBidder = require("../middlewares/requireAuthBidder");
 
 const router = express.Router();
 
