@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Info.module.scss';
 
@@ -10,6 +10,8 @@ import PlateDetail from "~/components/Form/PlateDetail";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
+import { authUserContext } from '~/App';
 
 const cx = classNames.bind(styles);
 
@@ -28,6 +30,7 @@ function Info() {
     const [showModal, setShowModal] = useState(false);
     const [item, setItem] = useState();
     const [itemIndex, setItemIndex] = useState(0);
+    const context = useContext(authUserContext);
 
     const handleShowModal = () => {
         setShowModal(true);
@@ -94,7 +97,19 @@ function Info() {
                                         </div>
                                     </div>
                                     <div className='flex flex-col items-center mt-4'>
-                                        <Button className='flex justify-center p-[9px_16px] mt-4 w-full' to={config.routes.room} state={ITEM} primary>Đăng ký đấu giá</Button>
+                                        <Button 
+                                            className='flex justify-center p-[9px_16px] mt-4 w-full' 
+                                            to={context.authUser ? config.routes.room : config.routes.login} 
+                                            state={ITEM} 
+                                            onClick={() => {
+                                                if (!context.authUser) {
+                                                    toast.error('Vui lòng Đăng nhập!');
+                                                }
+                                            }}
+                                            primary
+                                        >
+                                            Đăng ký đấu giá
+                                        </Button>
                                         <Button className='mt-4 text-[var(--primary)] font-normal' onClick={() => showDetail(ITEM)}>Xem thông tin chi tiết biển số</Button>
                                     </div>
                                 </Card>

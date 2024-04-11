@@ -1,14 +1,26 @@
-import { Fragment } from 'react';
+import { Fragment, createContext, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { publicRoutes } from '~/routes';
 import { CustomerLayout } from '~/layouts';
 import ScrollToTop from './components/ScrollToTop';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+export const authUserContext = createContext();
 
 function App() {
+  const [authUser, setAuthUser] = useState(JSON.parse(localStorage.getItem('user')));
+  const handleAuthUser = (data) => setAuthUser(data);
+  const value = {
+    authUser,
+    handleAuthUser,
+  };
+  
   return (
-    <div className="App">
+    <authUserContext.Provider value={value}>
       <Router>
         <div className="App">
+          <ToastContainer />
           <ScrollToTop />
           <Routes>
             {publicRoutes.map((route, index) => {
@@ -36,7 +48,7 @@ function App() {
           </Routes>
         </div>
       </Router>
-    </div>
+    </authUserContext.Provider>
   );
 }
 

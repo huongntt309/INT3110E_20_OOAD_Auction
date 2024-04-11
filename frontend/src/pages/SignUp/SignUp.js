@@ -6,12 +6,14 @@ import Input from '~/components/Input';
 import Button from '~/components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const cx = classNames.bind(styles);
 
 function SignUp() {
     const [inputs, setInputs] = useState({
-        email: '',
+        phone_number: '',
         password: '',
         rePassword: '',
         checked: false,
@@ -27,25 +29,45 @@ function SignUp() {
         }));
     }
 
+    const inputPhone = (value) => {
+        value = value.replace(/[^0-9\s]/g, '');
+        value = value.replaceAll(' ', '');
+        const len = value.length;
+    
+        let count = 0;
+    
+        for (let i = 1; i <= ((len % 4 === 0) ? Math.floor(len / 4) - 1 : Math.floor(len / 4)); i++) {
+            const position = i * 4 + count;
+            value = `${value.slice(0, position)} ${value.slice(position)}`;
+            count++;
+        }
+    
+        return value;
+    }
+
     const validation = () => {
-        if (inputs.email === '') {
-            alert('Please enter your email!');
+        if (inputs.phone_number === '') {
+            toast.error('Vui lòng nhập Số điện thoại!');
+            return false;
+        }
+        if (inputs.phone_number.replaceAll(' ', '').length < 10) {
+            toast.error('Vui lòng nhập Số điện thoại hợp lệ!');
             return false;
         }
         if (inputs.password === '') {
-            alert('Please enter your password!');
+            toast.error('Vui lòng nhập Mật khẩu!');
             return false;
         }
         if (inputs.rePassword === '') {
-            alert('Please enter your confirmation password!');
+            toast.error('Vui lòng nhập Nhập lại mật khẩu!');
             return false;
         }
         if (inputs.rePassword !== inputs.password) {
-            alert('Please check your confirmation password!');
+            toast.error('Mật khẩu không khớp!');
             return false;
         }
         if (inputs.checked === false) {
-            alert('Please agree with our conditions!');
+            toast.error('Vui lòng đồng ý với điều khoản của chúng tôi!');
             return false;
         }
         return true;
@@ -53,23 +75,40 @@ function SignUp() {
 
     const handleSubmit = () => {
         if (validation()) {
-            alert('Login successfully!');
+            toast.success('Đăng ký thành công!');
         }
     }
 
     return (
         <div className={cx('p-16', 'wrapper')}>
             <div className='flex justify-center items-center h-full'>
+                <ToastContainer />
                 <div className={cx('flex flex-col justify-center w-2/5', 'form')}>
                     <h1 className={cx('form-header')}>Đăng ký</h1>
                     <Input 
                         className={cx('form-input')}
                         type='text' 
-                        label='Email'
-                        placeholder='Email'
-                        name='email'
-                        value={inputs.email}
-                        onChange={handleInputChange}
+                        label='Số điện thoại'
+                        placeholder='Số điện thoại'
+                        name='phone_number'
+                        value={inputs.phone_number}
+                        onChange={(e) => {
+                            let { name, value } = e.target;
+                            value = inputPhone(value);
+                            
+                            if (value.replaceAll(' ', '').length <= 10) {
+                                setInputs((prev) => ({
+                                    ...prev,
+                                    [name]: value,
+                                }));
+                            }
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === ' ') {
+                                // Prevent press space key
+                                e.preventDefault();
+                            } 
+                        }}
                     />
                     <Input 
                         className={cx('form-input')}

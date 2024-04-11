@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { useNavigate } from 'react-router-dom';
 import classNames from "classnames/bind";
 import styles from './Header.module.scss';
 import { Link, NavLink } from "react-router-dom";
@@ -9,37 +11,41 @@ import Image from '~/components/Image';
 import Menu from '~/components/Menu';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { toast } from 'react-toastify';
+import { authUserContext } from "~/App";
 
 const cx = classNames.bind(styles);
 
+const MENU_ITEMS = [
+    {
+        icon: <FontAwesomeIcon icon={faUser}/>,
+        title: 'Xem hồ sơ',
+        to: config.routes.profile,
+    },
+    {
+        icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />,
+        title: 'Đăng xuất',
+        link: 'log_out',
+        className: 'separate',
+    }
+];
+
 function Header() {
-    const user = true;
-    const MENU_ITEMS = [
-        {
-            icon: <FontAwesomeIcon icon={faUser}/>,
-            title: 'Xem hồ sơ',
-            // to: '/:nickname',
-            to: '/ho-so',
-        },
-        {
-            icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />,
-            title: 'Đăng xuất',
-            // link: '/logout',
-            to: config.routes.home,
-            className: 'separate',
-        }
-    ];
+    const context = useContext(authUserContext);
+    const user = context && context.authUser?.user;
+    const navigate = useNavigate();
 
     // Handle logic
     const handleMenuChange = (menuItem) => {
-        switch(menuItem.to) {
-            case config.routes.home:
-                // authService.logout();
-                // window.location.assign(config.routes.home);
+        switch(menuItem.link) {
+            case 'log_out':
+                toast.success('Đăng xuất thành công!');
+                localStorage.removeItem('user');
+                context.handleAuthUser();
+                setTimeout(() => {
+                    navigate(config.routes.home);
+                }, 200);
                 break;
-            // case '/:nickname':
-                // window.location.href = `/:${authUser.data.nickname}`;
-                // break;
             default:
                 break;
         }
@@ -56,17 +62,22 @@ function Header() {
 
                 <div className='flex justify-center'>
                     <NavItem className={cx('header-link')} to={config.routes.home} title='Trang chủ' />
-                    {/* <NavItem className={cx('header-link')} to={'/a'} title='Danh sách công bố' /> */}
                     <NavItem className={cx('header-link')} to={config.routes.products} title='Danh sách chính thức' />
-                    <NavItem className={cx('header-link')} to={config.routes.room} title='Phòng đấu giá' />
+                    <NavItem 
+                        className={cx('header-link')} 
+                        to={config.routes.room} 
+                        title='Phòng đấu giá'
+                    />
                     <NavItem className={cx('header-link')} to={config.routes.result} title='Kết quả đấu giá' />
                     <NavItem className={cx('header-link')} to={'/a'} title='Thông báo' />
                 </div>
                 
-                {user ? (
+                {context.authUser ? (
                     <div className='flex justify-end min-w-[200px] max-w-[250px]'>
                         <div className='flex flex-col items-end'>
-                            <span className='font-semibold'>Nguyễn Hà Hoàng Anh</span>
+                            <span className='font-semibold'>
+                                {user.last_name} {user.first_name}
+                            </span>
                             <span className='text-[var(--primary)] font-semibold'>1,000,000,000 VNĐ</span>
                         </div>
                         <Menu
@@ -91,9 +102,9 @@ function Header() {
     );
 }
 
-function NavItem({ className, to, title }) {
+function NavItem({ className, to, title, ...otherProps }) {
     return (
-        <NavLink className={(nav) => cx(className, { active: nav.isActive })} to={to}>
+        <NavLink className={(nav) => cx(className, { active: nav.isActive })} to={to} {...otherProps}>
             {title}
         </NavLink>
     )

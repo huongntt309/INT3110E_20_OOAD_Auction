@@ -1,5 +1,5 @@
 import classNames from "classnames/bind";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from './ProfileForm.module.scss';
 
 import Input from '~/components/Input';
@@ -9,10 +9,12 @@ const cx = classNames.bind(styles);
 
 function ProfileForm({ item, onClose, updateData }) {
     const [inputs, setInputs] = useState({
-        name: item !== undefined ? item.name : '',
-        gender: item !== undefined ? item.gender : 'Nam',
+        first_name: item !== undefined ? item.first_name : '',
+        last_name: item !== undefined ? item.last_name : '',
+        // gender: item !== undefined ? item.gender : 'Nam',
+        birthday: item !== undefined ? item.dob : '',
         address: item !== undefined ? item.address : '',
-        phone: item !== undefined ? item.phone : '',
+        // phone: item !== undefined ? item.phone : '',
     });
 
     const handleInputChange = (e) => {
@@ -50,15 +52,44 @@ function ProfileForm({ item, onClose, updateData }) {
             <Input 
                 className={cx('form-input')}
                 type='text'
-                placeholder='Tên quán'
-                label='Tên'
+                placeholder='Họ'
+                label='Họ'
                 inline
-                small
-                name='name'
-                value={inputs.name}
+                name='last_name'
+                value={inputs.last_name}
                 onChange={handleInputChange}
             />
-            <div className='flex justify-between w-2/5'>
+            <Input 
+                className={cx('form-input')}
+                type='text'
+                placeholder='Tên'
+                label='Tên'
+                inline
+                name='first_name'
+                value={inputs.first_name}
+                onChange={handleInputChange}
+            />
+            <Input 
+                className={cx('form-input')}
+                type='date'
+                placeholder='Ngày sinh'
+                label='Ngày sinh'
+                inline
+                name='birthday'
+                value={inputs.birthday}
+                onChange={handleInputChange}
+            />
+            <Input 
+                className={cx('form-input')}
+                type='text'
+                placeholder='Địa chỉ'
+                label='Địa chỉ'
+                inline
+                name='address'
+                value={inputs.address}
+                onChange={handleInputChange}
+            />
+            {/* <div className='flex justify-between w-2/5'>
                 <Input
                     id='staff-form-male'
                     className={cx('flex items-center', 'form-radio')}
@@ -93,9 +124,9 @@ function ProfileForm({ item, onClose, updateData }) {
                         }));
                     }}
                 />
-            </div>
+            </div> */}
 
-            <h3 className={cx('font-semibold uppercase mb-4', 'form-header')}>Thông tin liên lạc</h3>
+            {/* <h3 className={cx('font-semibold uppercase mb-4', 'form-header')}>Thông tin liên lạc</h3>
             <Input 
                 className={cx('form-input')}
                 type='text'
@@ -132,7 +163,7 @@ function ProfileForm({ item, onClose, updateData }) {
                         }
                     }
                 }}
-            />
+            /> */}
         </CustomForm>
     );
 }
