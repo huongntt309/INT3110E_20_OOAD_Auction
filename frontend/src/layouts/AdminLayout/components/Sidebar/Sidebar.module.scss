@@ -1,0 +1,117 @@
+.wrapper {
+    position: fixed;
+    padding: 20px 10px;
+    width: var(--admin-layout-sidebar-width);
+    height: calc(100vh - var(--admin-layout-header-height));
+    background-color: var(--white);
+    border-right: 1px solid var(--border-color);
+    z-index: 998;
+}
+
+.menu-item {
+    position: relative;
+    height: 48px;
+    transition: all 0.3s linear;
+
+    & ~ .menu-item {
+        margin-top: 4px;
+    }
+
+    // Show submenu icon
+    &:has(.sub-menu) > .link::before {
+        content: '\002B';
+        display: block;
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        font-size: 2.4rem;
+        font-weight: 400;
+    }
+    
+    &:has(.sub-menu).show-sub-menu > .link::before {
+        content: '\2212';
+    }
+
+    // Submenu
+    &:has(.sub-menu) .sub-menu {
+        opacity: 0;
+        visibility: hidden;
+    }
+    
+    &:has(.sub-menu).show-sub-menu .sub-menu {
+        opacity: 1;
+        visibility: initial;
+    }
+}
+
+.sub-menu {
+    transition: all 0.2s linear;
+}
+
+.sub-menu-item {
+    margin-top: 4px;
+
+    & .link {
+        padding: 6px;
+    } 
+    
+    & .link .title {
+        margin-top: 0;;
+    } 
+
+    & .link.active {
+        font-weight: 400;
+        color: var(--black);
+        background-color: var(--white);
+    }
+    
+    & .link.active::before {
+        content: '\2022';
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        font-size: 2.4rem;
+        color: var(--primary);
+    }
+
+    &:hover .link.active {
+        background-color: var(--hover-color);
+    }
+}
+
+// MenuItem
+.link {
+    // --hover-color: rgba(22, 24, 35, 0.03);
+
+    display: flex;
+    padding: 10px;
+    font-weight: 400;
+    color: var(--black);
+    border-radius: 4px;
+    transition: all 0.3s linear;
+    cursor: pointer;
+
+    &.active {
+        font-weight: 600;
+        color: var(--white);
+        // background-color: #ffeced;
+        // color: var(--white);
+        background-color: var(--primary);
+    }
+    
+    &:not(.active):hover {
+        background-color: var(--hover-color);
+    }
+}
+
+.icon {
+    margin-right: 8px;
+    width: 20px;
+}
+
+.title {
+    margin-top: 4px;
+}

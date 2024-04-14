@@ -1,0 +1,34 @@
+.container {
+    padding: 20px;
+}
+
+.form-header {
+    margin: 48px 0 32px;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.close-btn {
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 2.8rem;
+    border-radius: 50%;
+    background-color: #eee;
+    transition: all 0.3s linear;
+
+    &:hover {
+        opacity: 0.7;
+    }
+}
+
+.submit-btn {
+    padding: 9px 16px;
+    margin-top: 4px;
+
+    &:last-child:hover {
+        background-color: var(--white);
+        color: var(--primary);
+    }
+}

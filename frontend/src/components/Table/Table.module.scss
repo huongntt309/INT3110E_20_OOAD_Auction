@@ -1,0 +1,57 @@
+.wrapper {
+    min-height: 550px;
+}
+
+.container {
+    overflow-y: overlay;
+
+    &::-webkit-scrollbar {
+        display: block;
+        height: 8px;
+    }
+}
+
+.table {
+    white-space: nowrap;
+    cursor: default;
+
+    // Transition
+    & tr,
+    & tr td {
+        transition: all 0.3s linear;
+    }
+    
+    // Padding
+    & tr th,
+    & tr td {
+        padding: 10px;
+    }
+
+    // Border
+    & tr th,
+    & tr:not(tr:last-child) {
+        border-bottom: 1px solid #eee;
+    }
+
+    // First & last column -> text center
+    & tr th:first-child,
+    & tr td:first-child,
+    & tr th:last-child,
+    & tr td:last-child {
+        text-align: center;
+    }
+
+    // Hover
+    & tr:has(td):hover,
+    &.fixed-last tr:has(td):hover td:last-child {
+        background-color: var(--hover-color);
+    }
+
+    // Fixed last column
+    &.fixed-last tr th:last-child,
+    &.fixed-last tr td:last-child {
+        position: sticky;
+        right: 0;
+        background-color: var(--white);
+    }
+}
