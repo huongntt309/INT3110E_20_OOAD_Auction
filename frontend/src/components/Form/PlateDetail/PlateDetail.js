@@ -8,23 +8,19 @@ function PlateDetail({ item, onClose }) {
         >
             <div className='flex justify-between mb-8 text-[16px]'>
                 <span>Biển số</span>
-                <span className='font-semibold'>{item.number}</span>
-            </div>
-            <div className='flex justify-between mb-8 text-[16px]'>
-                <span>Thời gian mở đăng ký</span>
-                <span className='font-semibold'>{item.registerStart}</span>
-            </div>
-            <div className='flex justify-between mb-8 text-[16px]'>
-                <span>Thời gian kết thúc đăng ký</span>
-                <span className='font-semibold'>{item.registerEnd}</span>
+                <span className='font-semibold'>{item.plate_id}</span>
             </div>
             <div className='flex justify-between mb-8 text-[16px]'>
                 <span>Thời gian bắt đầu đấu giá</span>
-                <span className='font-semibold'>{item.auctionStart}</span>
+                <span className='font-semibold'>
+                    {item.start_date.split('-').reverse().join('/')}
+                </span>
             </div>
             <div className='flex justify-between mb-8 text-[16px]'>
                 <span>Thời gian kết thúc đấu giá</span>
-                <span className='font-semibold'>{item.auctionEnd}</span>
+                <span className='font-semibold'>
+                    {item.end_date.split('-').reverse().join('/')}
+                </span>
             </div>
         </CustomForm>
     );

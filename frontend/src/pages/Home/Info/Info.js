@@ -17,13 +17,15 @@ const cx = classNames.bind(styles);
 
 // Sample
 const ITEM = {
-    number: '51K-868.68',
-    type: 'Xe con',
-    address: 'Thành phố Hồ Chí Minh',
-    registerStart: '11:39 17/07/2023',
-    registerEnd: '16:30 09/04/2024',
-    auctionStart: '09:15 12/04/2024',
-    auctionEnd: '09:40 12/04/2024',
+    "auction_id": 1,
+    "plate_id": "30K-777.77",
+    "start_date": "2024-04-05",
+    "end_date": "2024-04-12",
+    "auction_status": "in progress",
+    "bid_winner_id": "null",
+    "city": "Thành phố Hà Nội",
+    "plate_type": "Ngũ quý",
+    "vehicle_type": "Xe Con",
 };
 
 function Info() {
@@ -59,6 +61,16 @@ function Info() {
 		});
 	}
 
+    const remainingTime = (item) => {
+        const start = new Date(item.start_date);
+        const end = new Date(item.end_date);
+        
+        var millisBetween = start.getTime() - end.getTime();
+        var days = millisBetween / (1000 * 3600 * 24);
+
+        return `${Math.round(Math.abs(days))} ngày`;
+    }
+
     return (
         <div className='px-32 py-16'>
             <div>
@@ -78,13 +90,13 @@ function Info() {
                             {Array.from({ length: 7 }, (arr, index) => (
                                 <Card className={cx('grow-0 shrink-0 mx-4', 'card')} key={index}>
                                     <div className='flex flex-col justify-center items-center border-[4px] border-solid border-[var(--black)] aspect-[2/1] rounded-[4px]'>
-                                        <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{ITEM.number.split('-').shift()}</div>
-                                        <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{ITEM.number.split('-').pop()}</div>
+                                        <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{ITEM.plate_id.split('-').shift()}</div>
+                                        <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{ITEM.plate_id.split('-').pop()}</div>
                                     </div>
                                     <div className='mt-4'>
                                         <div className='flex text-[14px] text-[var(--second-text-color)]'>
-                                            <h3>{ITEM.type}</h3>
-                                            <h3 className='ml-8'>{ITEM.address}</h3>
+                                            <h3>{ITEM.vehicle_type}</h3>
+                                            <h3 className='ml-8'>{ITEM.city}</h3>
                                         </div>
                                         <div className='flex items-center mt-4'>
                                             <div className='flex justify-center items-center w-[34px] h-[34px] bg-[var(--hover-color)] rounded-full'>
@@ -92,7 +104,9 @@ function Info() {
                                             </div>
                                             <div className='ml-8'>
                                                 <h3 className='text-[14px] text-[var(--second-text-color)]'>Thời gian đăng ký còn lại</h3>
-                                                <h3 className='text-[16px] font-semibold'>6 ngày 2 giờ 40 phút</h3>
+                                                <h3 className='text-[16px] font-semibold'>
+                                                    {remainingTime(ITEM)}
+                                                </h3>
                                             </div>
                                         </div>
                                     </div>
