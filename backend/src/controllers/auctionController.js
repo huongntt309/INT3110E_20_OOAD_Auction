@@ -3,14 +3,21 @@ import {
     getAuctionById,
     getAllAuctions,
     updateAuction,
-    deleteAuction
+    deleteAuction,
+    closeAuction,
+    openAuction,
+    updateAllAuctionStatusByTime
 }
     from '../services/auctionService';
+
+
 
 const auctionController = {
     // Xử lý yêu cầu lấy tất cả các phiên đấu giá
     handleGetAllAuctions: async (req, res) => {
         try {
+            const currentTime = new Date();
+            console.log(currentTime);
             const auctions = await getAllAuctions();
             res.status(200).json(auctions);
         } catch (error) {
@@ -39,7 +46,11 @@ const auctionController = {
     handleCreateNewAuction: async (req, res) => {
         const auctionData = req.body;
         try {
-            await addAuction(auctionData);
+            const { plate_id, start_date, end_date, city, plate_type, vehicle_type } = auctionData;
+            const newAuctionId = await addAuction(auctionData);
+
+            // await updateAuctionStatusByTime(newAuctionId, start_date, end_date);
+            
             res.status(201).json({ message: 'Auction created successfully' });
         } catch (error) {
             console.error('Error creating auction:', error);

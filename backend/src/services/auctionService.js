@@ -1,12 +1,14 @@
+const AUCTION_STATUS_OPEN = 'Đang diễn ra'
+const AUCTION_STATUS_CLOSED = 'Đã kết thúc'
+const AUCTION_STATUS_WAIT_TO_OPEN = 'Chưa diễn ra'
+
 // Thêm một phiên đấu giá mới
 async function addAuction(auctionData) {
     const { plate_id, start_date, end_date, city, plate_type, vehicle_type } = auctionData;
-    const auction_status = 'in progress'
+    const auction_status = AUCTION_STATUS_WAIT_TO_OPEN;
     const bid_winner_id = 'null'
 
-
     const query_plate = `INSERT OR IGNORE INTO vehicle_registration_plates (plate_id, city, plate_type, vehicle_type) VALUES (?, ?, ?, ?)`;
-
 
     const query_auction = `
       INSERT INTO auctions (plate_id, start_date, end_date, auction_status, bid_winner_id)
@@ -15,8 +17,10 @@ async function addAuction(auctionData) {
 
     try {
         await global.db.run(query_plate, [plate_id, city, plate_type, vehicle_type]);
-        await global.db.run(query_auction, [plate_id, start_date, end_date, auction_status, bid_winner_id]);
+        const result = await global.db.run(query_auction, [plate_id, start_date, end_date, auction_status, bid_winner_id]);
+        const auction_id = result.lastID; // Lấy auction_id từ kết quả trả về
         console.log('Auction added successfully.');
+        return auction_id; // Trả lại auction_id
     } catch (error) {
         console.error('Error adding auction:', error);
     }
@@ -39,7 +43,7 @@ async function getAuctionById(auctionId) {
         return auctionWithPlate;
     } catch (error) {
         console.error('Error getting auction:', error);
-    }     
+    }
 };
 
 // Đọc tất cả các phiên đấu giá
@@ -78,7 +82,7 @@ async function updateAuction(auctionId, newData) {
     try {
         await global.db.run(queryAuction, [plate_id, start_date, end_date, auction_status, bid_winner_id, int_auctionId]);
         await global.db.run(queryPlate, [city, plate_type, vehicle_type, plate_id]);
-      console.log('Auction updated successfully.');
+        console.log('Auction updated successfully.');
     } catch (error) {
         console.error('Error updating auction:', error);
     }
@@ -95,6 +99,87 @@ async function deleteAuction(auctionId) {
     }
 }
 
+// cập nhật trạng thái cho auction status
+async function updateAuctionStatus(auctionId, newStatus) {
+    const queryAuction = `
+        UPDATE auctions
+        SET auction_status = ?
+        WHERE auction_id = ?
+    `;
+
+    try {
+        await global.db.run(queryAuction, [newStatus, auctionId]);
+    } catch (error) {
+        console.error('Error updating auction status:', error);
+    }
+};
+
+// Đóng mở một phiên đấu giá
+async function closeAuction(auctionId) {
+    try {
+        await updateAuctionStatus(auctionId, AUCTION_STATUS_CLOSED);
+        console.log('Auction status closeAuction successfully.');
+    } catch (error) {
+        console.error('Error updating auction status:', error);
+    }
+}
+
+// Đóng mở một phiên đấu giá
+async function openAuction(auctionId) {
+    try {
+        await updateAuctionStatus(auctionId, AUCTION_STATUS_OPEN);
+        console.log('Auction status openAuction successfully.');
+    } catch (error) {
+        console.error('Error updating auction status:', error);
+    }
+}
+
+// Đóng mở một phiên đấu giá
+async function pendingAuction(auctionId) {
+    try {
+        await updateAuctionStatus(auctionId, AUCTION_STATUS_WAIT_TO_OPEN);
+        console.log('Auction status updated successfully.');
+    } catch (error) {
+        console.error('Error updating auction status:', error);
+    }
+}
+
+async function updateAllAuctionStatusByTime() {
+    const currentDate = new Date();
+
+    try {
+        // Lấy danh sách tất cả phiên đấu giá từ cơ sở dữ liệu
+        const auctions = await getAllAuctions();
+
+        // Duyệt qua từng phiên đấu giá và cập nhật trạng thái
+        for (const auction of auctions) {
+            console.log(auction.auction_id);
+
+            const startDate = new Date(auction.start_date);
+            const endDate = new Date(auction.end_date);
+
+            // if thời gian hiện tại < start_date
+            if (currentDate < startDate) {
+                // thực ra là phải pendingAuctions nhưng ngay từ đầu đã pending r nên k cần
+                console.log(`${auction.auction_id} pending`);
+            }
+            // if thời gian hiện tại >= start_date
+            else if (currentDate >= startDate && currentDate <= endDate) {
+                // if thời gian hiện tại =< end_date
+                await openAuction(auction.auction_id);
+            }
+            // if thời gian hiện tại > end_date
+            else if (currentDate > endDate) {
+                await closeAuction(auction.auction_id);
+            }
+        }
+        console.log('Auction status update scheduled successfully.');
+    }
+
+    catch (error) {
+        console.error('Error updating auction status:', error);
+    }
+};
 
 export {
     addAuction,
@@ -102,4 +187,9 @@ export {
     getAllAuctions,
     updateAuction,
     deleteAuction,
+    updateAuctionStatus,
+    closeAuction,
+    openAuction,
+    pendingAuction,
+    updateAllAuctionStatusByTime,
 };
