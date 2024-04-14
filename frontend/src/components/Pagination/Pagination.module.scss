@@ -1,0 +1,30 @@
+.item {
+    & ~ .item {
+        margin-left: 10px;
+    }
+}
+
+.btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+
+    &:hover {
+        background-color: var(--white);
+        color: var(--primary);
+        border-color: var(--primary);
+    } 
+
+    &.active {
+        background-color: var(--primary);
+        color: var(--white);
+        border-color: transparent;
+    }
+
+    &.disable,
+    &.dot {
+        border-color: var(--black);
+        color: var(--black);
+        background-color: var(--white);
+    }
+}

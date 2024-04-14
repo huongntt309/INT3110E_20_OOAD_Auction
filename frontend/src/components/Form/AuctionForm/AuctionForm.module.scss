@@ -1,0 +1,13 @@
+.image {
+    margin-right: 30px;
+    width: 300px;
+    height: 300px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.form-input {
+    height: var(--input-height);
+    border: 1px solid var(--border-color);
+}

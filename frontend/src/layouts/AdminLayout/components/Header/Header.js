@@ -75,21 +75,9 @@ function Header() {
         <header className={cx('fixed inset-0 z-20', 'wrapper')}>
             <div className={cx('flex justify-between items-center w-full h-full', 'container')}>
                 <div>
-                    <Link to={config.routes.home}>
+                    <Link to={config.routes.dashboard}>
                         <LogoBlack />
                     </Link>
-                </div>
-
-                <div className='flex justify-center'>
-                    <NavItem className={cx('header-link')} to={config.routes.home} title='Trang chủ' />
-                    <NavItem className={cx('header-link')} to={config.routes.auction} title='Danh sách chính thức' />
-                    <NavItem 
-                        className={cx('header-link')} 
-                        to={config.routes.room} 
-                        title='Phòng đấu giá'
-                    />
-                    <NavItem className={cx('header-link')} to={config.routes.result} title='Kết quả đấu giá' />
-                    <NavItem className={cx('header-link')} to={'/a'} title='Thông báo' />
                 </div>
                 
                 {context.authUser ? (

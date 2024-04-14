@@ -1,6 +1,6 @@
 import classNames from "classnames/bind";
 import styles from './Select.module.scss';
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import Popper from '~/components/Popper';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +9,6 @@ import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 const cx = classNames.bind(styles);
 
 function Select({ 
-    id,
     className,
     data = [], 
     defaultValue, 
@@ -21,6 +20,7 @@ function Select({
 }) {
     const [isActive, setIsActive] = useState(false);
     const [value, setValue] = useState();
+    const id = useId();
 
     const handleSelectItem = (item) => {
         setValue(item.name);

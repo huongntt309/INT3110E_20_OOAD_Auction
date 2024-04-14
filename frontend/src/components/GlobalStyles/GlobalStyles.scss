@@ -25,6 +25,10 @@
 
     // Customer layout
     --customer-layout-header-height: 70px;
+
+    // Admin layout
+    --admin-layout-header-height: 70px;
+    --admin-layout-sidebar-width: 250px;
 }
 
 * {
@@ -35,6 +39,7 @@
 
 html {
     font-size: 62.5%;
+    scroll-behavior: smooth;
 }
 
 body {

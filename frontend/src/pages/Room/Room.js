@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import Input from '~/components/Input';
 import Button from '~/components/Button';
 import config from '~/config';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Room() {
@@ -14,7 +14,7 @@ function Room() {
     
     const inputCurrency = (value) => {
         value =  value.replace(/[^0-9\s]/g, '');
-            value =  value.replaceAll(',', '');
+        value =  value.replaceAll(',', '');
         const len = value.length;
     
         let count = 0;
@@ -50,7 +50,6 @@ function Room() {
     return (
         <div className='px-32 py-16'>
             <div>
-                <ToastContainer />
                 <div className='grid grid-cols-[auto_45%] gap-16'>
                     <div className='px-32 py-8 min-h-[367px] rounded-[10px] shadow-[0_4px_20px_var(--shadow-color)]'>
                         <div className='mx-auto px-16 py-4 w-fit text-center border-[0px] border-[var(--primary)] rounded-[6px]'>
@@ -62,10 +61,10 @@ function Room() {
                         {item ? (
                             <div className='flex flex-col justify-center items-center mt-16 mx-auto px-8 w-fit border-[4px] border-[var(--black)] aspect-[2/1] rounded-[6px]'>
                                 <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>
-                                    {item.number.split('-').shift()}
+                                    {item.plate_id.split('-').shift()}
                                 </div>
                                 <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>
-                                    {item.number.split('-').pop()}
+                                    {item.plate_id.split('-').pop()}
                                 </div>
                             </div>
                         ) : (

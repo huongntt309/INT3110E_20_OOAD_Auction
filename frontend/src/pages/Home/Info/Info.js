@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Info.module.scss';
 
@@ -10,27 +10,31 @@ import PlateDetail from "~/components/Form/PlateDetail";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { toast } from 'react-toastify';
-import { authUserContext } from '~/App';
+
+import * as auctionService from '~/services/auctionService';
 
 const cx = classNames.bind(styles);
 
-// Sample
-const ITEM = {
-    number: '51K-868.68',
-    type: 'Xe con',
-    address: 'Thành phố Hồ Chí Minh',
-    registerStart: '11:39 17/07/2023',
-    registerEnd: '16:30 09/04/2024',
-    auctionStart: '09:15 12/04/2024',
-    auctionEnd: '09:40 12/04/2024',
-};
-
 function Info() {
+    const [allData, setAllData] = useState();
+    const [data, setData] = useState();
     const [showModal, setShowModal] = useState(false);
     const [item, setItem] = useState();
     const [itemIndex, setItemIndex] = useState(0);
-    const context = useContext(authUserContext);
+
+    const fetchData = () => {
+        auctionService
+            .getAllItems()
+            .then((data) => {
+                // console.log('[INFO]', data);
+                setAllData(data);
+                setData(data.slice(0, 7));
+            });
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const handleShowModal = () => {
         setShowModal(true);
@@ -59,12 +63,22 @@ function Info() {
 		});
 	}
 
+    const remainingTime = (item) => {
+        const start = new Date(item.start_date);
+        const end = new Date(item.end_date);
+        
+        var millisBetween = start.getTime() - end.getTime();
+        var days = millisBetween / (1000 * 3600 * 24);
+
+        return `${Math.round(Math.abs(days))} ngày`;
+    }
+
     return (
         <div className='px-32 py-16'>
             <div>
                 <div className='flex justify-between mb-[4px]'>
-                    <p className='text-[16px] font-bold'>Có 46394 biển số</p>
-                    <Button className='text-[var(--primary)] text-[16px] font-normal' to={config.routes.products}>Xem tất cả</Button>
+                    <p className='text-[16px] font-bold'>Có {allData && allData.length} biển số</p>
+                    <Button className='text-[var(--primary)] text-[16px] font-normal' to={config.routes.auction}>Xem tất cả</Button>
                 </div>
                 <hr />
                 <div className='relative'>
@@ -75,16 +89,16 @@ function Info() {
                                 translate: `${-100 * itemIndex}%`
                             }}
                         >
-                            {Array.from({ length: 7 }, (arr, index) => (
+                            {data && data.map((item, index) => (
                                 <Card className={cx('grow-0 shrink-0 mx-4', 'card')} key={index}>
                                     <div className='flex flex-col justify-center items-center border-[4px] border-solid border-[var(--black)] aspect-[2/1] rounded-[4px]'>
-                                        <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{ITEM.number.split('-').shift()}</div>
-                                        <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{ITEM.number.split('-').pop()}</div>
+                                        <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{item.plate_id.split('-').shift()}</div>
+                                        <div className='text-[64px] leading-[64px] font-["UKNumberPlate"]'>{item.plate_id.split('-').pop()}</div>
                                     </div>
                                     <div className='mt-4'>
                                         <div className='flex text-[14px] text-[var(--second-text-color)]'>
-                                            <h3>{ITEM.type}</h3>
-                                            <h3 className='ml-8'>{ITEM.address}</h3>
+                                            <h3>{item.vehicle_type}</h3>
+                                            <h3 className='ml-8'>{item.city}</h3>
                                         </div>
                                         <div className='flex items-center mt-4'>
                                             <div className='flex justify-center items-center w-[34px] h-[34px] bg-[var(--hover-color)] rounded-full'>
@@ -92,31 +106,27 @@ function Info() {
                                             </div>
                                             <div className='ml-8'>
                                                 <h3 className='text-[14px] text-[var(--second-text-color)]'>Thời gian đăng ký còn lại</h3>
-                                                <h3 className='text-[16px] font-semibold'>6 ngày 2 giờ 40 phút</h3>
+                                                <h3 className='text-[16px] font-semibold'>
+                                                    {remainingTime(item)}
+                                                </h3>
                                             </div>
                                         </div>
                                     </div>
                                     <div className='flex flex-col items-center mt-4'>
                                         <Button 
                                             className='flex justify-center p-[9px_16px] mt-4 w-full' 
-                                            to={context.authUser ? config.routes.room : config.routes.login} 
-                                            state={ITEM} 
-                                            onClick={() => {
-                                                if (!context.authUser) {
-                                                    toast.error('Vui lòng Đăng nhập!');
-                                                }
-                                            }}
+                                            to={config.routes.auction} 
                                             primary
                                         >
                                             Đăng ký đấu giá
                                         </Button>
-                                        <Button className='mt-4 text-[var(--primary)] font-normal' onClick={() => showDetail(ITEM)}>Xem thông tin chi tiết biển số</Button>
+                                        <Button className='mt-4 text-[var(--primary)] font-normal' onClick={() => showDetail(item)}>Xem thông tin chi tiết biển số</Button>
                                     </div>
                                 </Card>
                             ))}
                             <Card className={cx('flex justify-center items-center grow-0 shrink-0 mx-4', 'card')}>
                                 <div className='flex flex-col justify-center items-center'>
-                                    <Button to={config.routes.products}>
+                                    <Button to={config.routes.auction}>
                                         <div className='m-auto w-[24px] h-[24px] text-center border-2 border-solid border-[var(--primary)] rounded-full'>
                                             <FontAwesomeIcon className='text-[var(--primary)]' icon={faChevronRight} />
                                         </div>
