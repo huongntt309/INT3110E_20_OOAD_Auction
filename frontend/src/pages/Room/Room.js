@@ -4,6 +4,8 @@ import { useLocation } from 'react-router-dom';
 import Input from '~/components/Input';
 import Button from '~/components/Button';
 import config from '~/config';
+import Modal from '~/components/Modal';
+import DepositForm from '~/components/Form/DepositForm';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -54,9 +56,22 @@ function Room() {
                     <div className='px-32 py-8 min-h-[367px] rounded-[10px] shadow-[0_4px_20px_var(--shadow-color)]'>
                         <div className='mx-auto px-16 py-4 w-fit text-center border-[0px] border-[var(--primary)] rounded-[6px]'>
                             <h3 className='text-[20px] uppercase font-semibold'>Thời gian đấu giá còn lại</h3>
-                            <h3 className='text-[60px] leading-[60px] text-[var(--primary)] font-["UKNumberPlate"]'>
-                                {(item && '10:00') || '00:00'}
-                            </h3>
+                            <div className='flex justify-evenly'>
+                                {/* {(item && '10:00') || '00:00'} */}
+                                <span className='flex flex-col items-center'>
+                                    <span className='text-[60px] leading-[60px] text-[var(--primary)] font-["UKNumberPlate"]'>
+                                        {(item && '10') || '00'}
+                                    </span>
+                                    <span className='text-[16px] leading-[18px] font-normal'>Phút</span>
+                                </span>
+                                <span>:</span>
+                                <span className='flex flex-col items-center'>
+                                    <span className='text-[60px] leading-[60px] text-[var(--primary)] font-["UKNumberPlate"]'>
+                                        {(item && '00') || '00'}
+                                    </span>
+                                    <span className='text-[16px] leading-[18px] font-normal'>Giây</span>
+                                </span>
+                            </div>
                         </div>
                         {item ? (
                             <div className='flex flex-col justify-center items-center mt-16 mx-auto px-8 w-fit border-[4px] border-[var(--black)] aspect-[2/1] rounded-[6px]'>
@@ -70,7 +85,7 @@ function Room() {
                         ) : (
                             <div className='flex flex-col justify-center items-center mt-16 mx-auto px-8 w-fit border-[4px] border-[var(--black)] aspect-[2/1] rounded-[6px]'>
                                 <h3 className='text-[20px]'>Vui lòng chọn biển số để đấu giá</h3>
-                                <Button className='mt-4 p-[9px_16px]' to={config.routes.products} primary>Chọn biển số</Button>
+                                <Button className='mt-4 p-[9px_16px]' to={config.routes.auction} primary>Chọn biển số</Button>
                             </div>
                         )}
                     </div>

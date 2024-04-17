@@ -6,6 +6,7 @@ const routes = {
     room: '/phong-dau-gia',
     result: '/ket-qua-dau-gia',
     profile: '/ho-so',
+    waiting_auction: '/bien-cho-dau-gia',
 
     // Admin
     dashboard: '/trang-chu',

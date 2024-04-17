@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import classNames from "classnames/bind";
-import styles from './Auction.module.scss';
+import styles from './WaitingAuction.module.scss';
 
 import Card from '~/components/Card';
 import Button from '~/components/Button';
@@ -22,7 +22,7 @@ const cx = classNames.bind(styles);
 const PAGE = 1;
 const PER_PAGE = 8;
 
-function Auction() {
+function WaitingAuction() {
     // Query
     const [params, setParams] = useSearchParams({ 'page': PAGE });
     const page = Number(params.get('page')) || PAGE;
@@ -32,7 +32,7 @@ function Auction() {
     const [showModal, setShowModal] = useState(false);
     const [modal, setModal] = useState();
     // const [item, setItem] = useState();
-    const context = useContext(authUserContext);
+    // const context = useContext(authUserContext);
 
     // Pagination
     const [pageCount, setPageCount] = useState();
@@ -67,10 +67,10 @@ function Auction() {
     }
 
     // Handle deposit
-    const handleDeposit = () => {
-        handleShowModal();
-        setModal(<DepositForm onClose={handleCloseModal} />)
-    }
+    // const handleDeposit = () => {
+    //     handleShowModal();
+    //     setModal(<DepositForm onClose={handleCloseModal} />)
+    // }
 
     // Show detail
     const showDetail = (item) => {
@@ -92,7 +92,7 @@ function Auction() {
     return (
         <div className='px-32 py-16'>
             <div>
-                <h1 className='mb-8 text-[32px] text-center font-bold uppercase'>Tất cả biển số</h1>
+            <h1 className='mb-8 text-[32px] text-center font-bold uppercase'>Biển số chờ đấu giá</h1>
                 <div className='grid grid-cols-4 gap-8'>
                     {data && data.map((item, index) => (
                         <Card className={cx('card')} key={index}>
@@ -120,18 +120,14 @@ function Auction() {
                             <div className='flex flex-col items-center mt-4'>
                                 <Button 
                                     className='flex justify-center p-[9px_16px] mt-4 w-full' 
-                                    to={context.authUser ? config.routes.auction : config.routes.login} 
+                                    to={config.routes.room} 
                                     state={item} 
                                     primary
                                     onClick={() => {
-                                        if (!context.authUser) {
-                                            toast.error('Vui lòng đăng nhập!');
-                                        } else {
-                                            handleDeposit();
-                                        }
+                                        // handleDeposit();
                                     }}
                                 >
-                                    Đăng ký đấu giá
+                                    Tham gia đấu giá
                                 </Button>
                                 <Button 
                                     className='mt-4 text-[var(--primary)] font-normal' 
@@ -160,4 +156,4 @@ function Auction() {
     );
 }
 
-export default Auction;
+export default WaitingAuction;
