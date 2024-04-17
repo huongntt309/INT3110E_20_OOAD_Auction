@@ -8,6 +8,9 @@ const images = {
 
     // Footer
     logo_gov: require('./logo-gov.png'),
+
+    // QR
+    qr: require('./qr.png'),
 };
 
 export default images;

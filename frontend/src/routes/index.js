@@ -7,6 +7,7 @@ import Auction from '~/pages/Auction';
 import Room from '~/pages/Room';
 import Result from '~/pages/Result';
 import Profile from '~/pages/Profile';
+import WaitingAuction from '~/pages/WaitingAuction';
 
 // Admin
 import { AdminLayout } from '~/layouts';
@@ -22,6 +23,7 @@ const publicRoutes = [
     { path: config.routes.room, component: Room },
     { path: config.routes.result, component: Result },
     { path: config.routes.profile, component: Profile },
+    { path: config.routes.waiting_auction, component: WaitingAuction },
 
     // Admin
     { path: config.routes.dashboard, component: Dashboard, layout: AdminLayout },

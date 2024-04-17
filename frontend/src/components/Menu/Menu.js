@@ -59,7 +59,7 @@ function Menu({
             return (
                 <div key={index}>
                     <MenuItem 
-                        className='flex'
+                        className='flex justify-start'
                         data={item}
                         onClick={() => {
                             if (isParent) 
