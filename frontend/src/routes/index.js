@@ -13,6 +13,7 @@ import WaitingAuction from '~/pages/WaitingAuction';
 import { AdminLayout } from '~/layouts';
 import Dashboard from '~/pages/Admin/Dashboard';
 import AuctionManagement from '~/pages/Admin/AuctionManagement';
+import DepositManagement from '~/pages/Admin/DepositManagement';
 
 // Không cần đăng nhập
 const publicRoutes = [
@@ -28,6 +29,7 @@ const publicRoutes = [
     // Admin
     { path: config.routes.dashboard, component: Dashboard, layout: AdminLayout },
     { path: config.routes.auction_management, component: AuctionManagement, layout: AdminLayout },
+    { path: config.routes.deposit_management, component: DepositManagement, layout: AdminLayout },
 ]
 
 // Phải đăng nhập, nếu không đăng nhập -> nhảy sang login

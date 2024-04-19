@@ -11,6 +11,7 @@ const routes = {
     // Admin
     dashboard: '/trang-chu',
     auction_management: '/quan-ly-bien-so',
+    deposit_management: '/quan-ly-dat-coc',
 };
 
 export default routes;
