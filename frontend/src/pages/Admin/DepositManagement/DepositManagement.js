@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames/bind';
-import styles from './AuctionManagement.module.scss';
+import styles from './DepositManagement.module.scss';
 
 import Card from '~/components/Card';
 import Table from '~/components/Table';
@@ -13,25 +13,21 @@ import DeleteForm from '~/components/Form/DeleteForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-import * as auctionService from '~/services/auctionService';
+import * as paymentService from '~/services/paymentService';
 
 const cx = classNames.bind(styles);
 
 const TB_HEADER = [
     'STT',
-    'Biển số',
-    'ID',
+    'Loại',
     'Trạng thái',
-    'Địa chỉ',
-    'Loại biển',
-    'Phương tiện',
     'Hành động',
 ];
 
 const PAGE = 1;
 const PER_PAGE = 10;
 
-function AuctionManagement() {
+function DepositManagement() {
     // Query
     const [params, setParams] = useSearchParams({ 'page': PAGE });
     const page = Number(params.get('page')) || PAGE;
@@ -46,8 +42,8 @@ function AuctionManagement() {
     const [pageCount, setPageCount] = useState();
     
     const fetchData = () => {
-        auctionService
-            .getAllItems()
+        paymentService
+            .getAllPaymentsAdmin()
             .then((data) => {
                 const length = Math.ceil(data.length / PER_PAGE);
                 setPageCount(length);
@@ -101,24 +97,20 @@ function AuctionManagement() {
     return (
         <div className="p-16">
             <div>
-                <Card title='Đấu giá'>
+                <Card title='Đặt cọc'>
                     <Table header={TB_HEADER} fixedLast>
                         {data && data.map((item, index) => (
                             <tr key={item.auction_id}>
                                 <td>{index + 1}</td>
-                                <td>{item.plate_id}</td>
-                                <td>{item.auction_id}</td>
+                                <td>{item.payment_type}</td>
                                 <td>
                                     <span className={cx('p-[2px_8px] rounded-full', 'status', {
-                                        success: item.auction_status.toLowerCase() === 'đã kết thúc',
-                                        pending: item.auction_status.toLowerCase() === 'đang diễn ra',
+                                        success: item.payment_status.toLowerCase() === 'verify',
+                                        pending: item.payment_status.toLowerCase() === 'pending',
                                     })}>
-                                        {item.auction_status}
+                                        {item.payment_status}
                                     </span>
                                 </td>
-                                <td>{item.city}</td>
-                                <td>{item.plate_type}</td>
-                                <td>{item.vehicle_type}</td>
                                 <td className='flex justify-center'>
                                     <Button 
                                         className='mx-[4px] w-[30px] h-[30px] rounded-full' 
@@ -144,13 +136,13 @@ function AuctionManagement() {
                         params={params}
                         setParams={setParams}
                     />
-                    <Button 
+                    {/* <Button 
                         className='mt-8 p-[9px_16px]'
                         primary leftIcon={<FontAwesomeIcon icon={faPlus} />}
                         onClick={handleAdd}
                     >
                         Thêm
-                    </Button>
+                    </Button> */}
                 </Card>
 
                 {showModal &&
@@ -160,7 +152,7 @@ function AuctionManagement() {
                                 item={item} 
                                 onClose={handleCloseModal} 
                                 updateData={fetchData} 
-                                service={auctionService}
+                                service={paymentService}
                             />
                         ) : (
                             <DeleteForm 
@@ -168,7 +160,7 @@ function AuctionManagement() {
                                 name={item.plate_id}
                                 onClose={handleCloseModal}
                                 updateData={fetchData}
-                                service={auctionService}
+                                service={paymentService}
                             />
                         )}
                     </Modal>
@@ -178,4 +170,4 @@ function AuctionManagement() {
     );
 }
 
-export default AuctionManagement;
+export default DepositManagement;

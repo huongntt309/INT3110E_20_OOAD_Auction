@@ -67,9 +67,9 @@ function Auction() {
     }
 
     // Handle deposit
-    const handleDeposit = () => {
+    const handleDeposit = (item) => {
         handleShowModal();
-        setModal(<DepositForm onClose={handleCloseModal} />)
+        setModal(<DepositForm item={item} onClose={handleCloseModal} />)
     }
 
     // Show detail
@@ -120,14 +120,14 @@ function Auction() {
                             <div className='flex flex-col items-center mt-4'>
                                 <Button 
                                     className='flex justify-center p-[9px_16px] mt-4 w-full' 
-                                    to={context.authUser ? config.routes.auction : config.routes.login} 
-                                    state={item} 
+                                    // to={context.authUser ? config.routes.auction : config.routes.login} 
+                                    // state={item} 
                                     primary
                                     onClick={() => {
                                         if (!context.authUser) {
                                             toast.error('Vui lòng đăng nhập!');
                                         } else {
-                                            handleDeposit();
+                                            handleDeposit(item);
                                         }
                                     }}
                                 >

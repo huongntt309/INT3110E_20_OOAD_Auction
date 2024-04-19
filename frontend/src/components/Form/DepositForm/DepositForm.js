@@ -1,12 +1,19 @@
+import { useNavigate } from 'react-router-dom';
 import CustomForm from '~/components/Form/CustomForm';
 import images from '~/assets/images';
 import Button from '~/components/Button';
+import config from '~/config';
 import { toast } from 'react-toastify';
 
-function DepositForm({ onClose }) {
+import * as paymentService from '~/services/paymentService';
+
+function DepositForm({ item, onClose }) {
+    const navigate = useNavigate();
+
     const handleSubmit = () => {
         toast.success('Đặt cọc thành công!');
         onClose();
+        navigate(config.routes.waiting_auction);
     }
 
     return (
@@ -14,7 +21,13 @@ function DepositForm({ onClose }) {
             title='Đặt cọc'
             onClose={onClose}
         >
-            <h3 className='mb-4'>Vui lòng chuyển khoản đến công ty đấu giá</h3>
+            <h3 className='mb-4 text-[18px]'>
+                Thanh toán biển số 
+                <span className='ml-[4px] font-semibold'>
+                    {item && item.plate_id}
+                </span>
+                . Vui lòng chuyển khoản đến công ty đấu giá
+            </h3>
             <div className='grid grid-cols-[30%_auto] gap-8'>
                 <div>
                     <p className='text-[14px] text-[var(--second-text-color)]'>Quét mã thanh toán</p>

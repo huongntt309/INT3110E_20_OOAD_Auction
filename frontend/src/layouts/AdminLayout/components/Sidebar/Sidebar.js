@@ -7,7 +7,7 @@ import Button from '~/components/Button';
 import Menu from '../Menu';
 import MenuItem from '../MenuItem';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDoorOpen, faHouse, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import { faCoins, faDoorOpen, faHouse, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 
 const cx = classNames.bind(styles);
 
@@ -70,6 +70,7 @@ function Sidebar() {
             <Menu ref={menuRef}>
                 <MenuItem className={cx('menu-item')} to={config.routes.dashboard} icon={<FontAwesomeIcon icon={faHouse} />} title='Trang chủ' />
                 <MenuItem className={cx('menu-item')} to={config.routes.auction_management} icon={<FontAwesomeIcon icon={faLayerGroup} />} title='Quản lý đấu giá' />
+                <MenuItem className={cx('menu-item')} to={config.routes.deposit_management} icon={<FontAwesomeIcon icon={faCoins} />} title='Quản lý đặt cọc' />
                 {/* <MenuItem className={cx('menu-item')} icon={<FontAwesomeIcon icon={faMugHot} />} title='Quản lý thực đơn' onClick={toggleSubMenu}>
                     <Menu className={cx('sub-menu')}>
                         <MenuItem className={cx('sub-menu-item')} to={config.routes.admin_coffee_management} title='Cà phê' />

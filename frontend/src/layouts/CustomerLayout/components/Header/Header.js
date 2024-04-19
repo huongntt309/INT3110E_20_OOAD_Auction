@@ -17,7 +17,7 @@ import { authUserContext } from "~/App";
 const cx = classNames.bind(styles);
 
 const MENU_ITEMS = {
-    user: [
+    bidder: [
         {
             icon: <FontAwesomeIcon icon={faUser}/>,
             title: 'Xem hồ sơ',
