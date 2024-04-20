@@ -5,15 +5,15 @@ import { toast } from 'react-toastify';
 
 import * as paymentService from '~/services/paymentService';
 
-function DepositForm({ item, onClose }) {
+function PaymentForm({ item, onClose }) {
     const handleSubmit = () => {
-        toast.success('Đặt cọc thành công!');
+        toast.success('Thanh toán thành công!');
         onClose();
     }
 
     return (
         <CustomForm
-            title='Đặt cọc'
+            title='Thanh toán biến số đã đấu giá'
             onClose={onClose}
         >
             <h3 className='mb-4 text-[18px]'>
@@ -54,4 +54,4 @@ function DepositForm({ item, onClose }) {
     );
 }
 
-export default DepositForm;
+export default PaymentForm;

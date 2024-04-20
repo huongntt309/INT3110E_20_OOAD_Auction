@@ -10,8 +10,9 @@ import Pagination from '~/components/Pagination';
 import Modal from '~/components/Modal';
 import AuctionForm from '~/components/Form/AuctionForm';
 import DeleteForm from '~/components/Form/DeleteForm';
+import config from '~/config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import * as auctionService from '~/services/auctionService';
 
@@ -22,9 +23,8 @@ const TB_HEADER = [
     'Biển số',
     'ID',
     'Trạng thái',
+    'Ngày kết thúc',
     'Địa chỉ',
-    'Loại biển',
-    'Phương tiện',
     'Hành động',
 ];
 
@@ -116,9 +116,8 @@ function AuctionManagement() {
                                         {item.auction_status}
                                     </span>
                                 </td>
+                                <td>{item.end_date.split('-').reverse().join('/')}</td>
                                 <td>{item.city}</td>
-                                <td>{item.plate_type}</td>
-                                <td>{item.vehicle_type}</td>
                                 <td className='flex justify-center'>
                                     <Button 
                                         className='mx-[4px] w-[30px] h-[30px] rounded-full' 
@@ -133,6 +132,14 @@ function AuctionManagement() {
                                         onClick={() => handleDelete(item)}
                                     >
                                         <FontAwesomeIcon icon={faTrash} />
+                                    </Button>
+                                    <Button 
+                                        className='mx-[4px] w-[30px] h-[30px] rounded-full' 
+                                        primary
+                                        state={item}
+                                        to={`${config.routes.auction_management}/${item.auction_id}`}
+                                    >
+                                        <FontAwesomeIcon icon={faEye} />
                                     </Button>
                                 </td>
                             </tr>

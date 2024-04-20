@@ -10,18 +10,28 @@ import Button from '~/components/Button';
 import Image from '~/components/Image';
 import Menu from '~/components/Menu';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faArrowRightFromBracket, faFile } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faArrowRightFromBracket, faFile, faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { authUserContext } from "~/App";
 
 const cx = classNames.bind(styles);
 
 const MENU_ITEMS = {
-    user: [
+    bidder: [
         {
             icon: <FontAwesomeIcon icon={faUser}/>,
             title: 'Xem hồ sơ',
             to: config.routes.profile,
+        },
+        {
+            icon: <FontAwesomeIcon icon={faClockRotateLeft}/>,
+            title: 'Biển số chờ đấu giá',
+            to: config.routes.waiting_auction,
+        },
+        {
+            icon: <FontAwesomeIcon icon={faClockRotateLeft}/>,
+            title: 'Lịch sử đấu giá',
+            to: config.routes.auction_history,
         },
         {
             icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />,
@@ -40,6 +50,16 @@ const MENU_ITEMS = {
             icon: <FontAwesomeIcon icon={faFile}/>,
             title: 'Quản lý',
             to: config.routes.dashboard,
+        },
+        {
+            icon: <FontAwesomeIcon icon={faClockRotateLeft}/>,
+            title: 'Biển số chờ đấu giá',
+            to: config.routes.waiting_auction,
+        },
+        {
+            icon: <FontAwesomeIcon icon={faClockRotateLeft}/>,
+            title: 'Lịch sử đấu giá',
+            to: config.routes.auction_history,
         },
         {
             icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />,

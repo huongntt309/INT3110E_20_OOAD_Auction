@@ -20,7 +20,7 @@ function SignUp() {
         rePassword: '',
         first_name: '',
         last_name: '',
-        role: 'user',
+        role: 'bidder',
         dob: '',
         address: '',
     });

@@ -29,6 +29,11 @@ const MENU_ITEMS = {
             to: config.routes.waiting_auction,
         },
         {
+            icon: <FontAwesomeIcon icon={faClockRotateLeft}/>,
+            title: 'Lịch sử đấu giá',
+            to: config.routes.auction_history,
+        },
+        {
             icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />,
             title: 'Đăng xuất',
             link: 'log_out',
@@ -50,6 +55,11 @@ const MENU_ITEMS = {
             icon: <FontAwesomeIcon icon={faClockRotateLeft}/>,
             title: 'Biển số chờ đấu giá',
             to: config.routes.waiting_auction,
+        },
+        {
+            icon: <FontAwesomeIcon icon={faClockRotateLeft}/>,
+            title: 'Lịch sử đấu giá',
+            to: config.routes.auction_history,
         },
         {
             icon: <FontAwesomeIcon icon={faArrowRightFromBracket} />,
