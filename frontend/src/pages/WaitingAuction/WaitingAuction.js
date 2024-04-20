@@ -9,7 +9,6 @@ import Modal from "~/components/Modal";
 import Pagination from '~/components/Pagination';
 import PlateDetail from "~/components/Form/PlateDetail";
 import config from '~/config';
-import DepositForm from "~/components/Form/DepositForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { toast } from 'react-toastify';
@@ -30,8 +29,7 @@ function WaitingAuction() {
 
     const [data, setData] = useState();
     const [showModal, setShowModal] = useState(false);
-    const [modal, setModal] = useState();
-    // const [item, setItem] = useState();
+    const [item, setItem] = useState();
     // const context = useContext(authUserContext);
 
     // Pagination
@@ -66,27 +64,21 @@ function WaitingAuction() {
         setShowModal(false);
     }
 
-    // Handle deposit
-    // const handleDeposit = () => {
-    //     handleShowModal();
-    //     setModal(<DepositForm onClose={handleCloseModal} />)
-    // }
-
     // Show detail
     const showDetail = (item) => {
         handleShowModal();
-        // setItem(item);
-        setModal(<PlateDetail item={item} onClose={handleCloseModal} />);
+        setItem(item);
     }
 
     const remainingTime = (item) => {
-        const start = new Date(item.start_date);
+        // const start = new Date(item.start_date);
         const end = new Date(item.end_date);
+        const now = Date.now();
         
-        var millisBetween = start.getTime() - end.getTime();
+        var millisBetween = end.getTime() - now;
         var days = millisBetween / (1000 * 3600 * 24);
 
-        return `${Math.round(Math.abs(days))} ngày`;
+        return Math.round(days);
     }
 
     return (
@@ -112,7 +104,7 @@ function WaitingAuction() {
                                     <div className='ml-8'>
                                         <h3 className='text-[14px] text-[var(--second-text-color)]'>Thời gian đăng ký còn lại</h3>
                                         <h3 className='text-[16px] font-semibold'>
-                                            {remainingTime(item)}
+                                            {remainingTime(item)} ngày
                                         </h3>
                                     </div>
                                 </div>
@@ -148,7 +140,10 @@ function WaitingAuction() {
     
                 {showModal && 
                     <Modal>
-                        {modal}
+                        <PlateDetail 
+                            item={item} 
+                            onClose={handleCloseModal} 
+                        />
                     </Modal>
                 }
             </div>

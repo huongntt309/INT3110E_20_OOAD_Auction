@@ -43,6 +43,8 @@ function Auction() {
             .then((data) => {
                 const length = Math.ceil(data.length / PER_PAGE);
                 setPageCount(length);
+                data = data.filter((item) => 
+                    (item.auction_status.toLowerCase() !== 'đã kết thúc'))
                 return { data, length };
             })
             .then((data) => {
@@ -80,13 +82,14 @@ function Auction() {
     }
 
     const remainingTime = (item) => {
-        const start = new Date(item.start_date);
+        // const start = new Date(item.start_date);
         const end = new Date(item.end_date);
+        const now = Date.now();
         
-        var millisBetween = start.getTime() - end.getTime();
+        var millisBetween = end.getTime() - now;
         var days = millisBetween / (1000 * 3600 * 24);
 
-        return `${Math.round(Math.abs(days))} ngày`;
+        return Math.round(days);
     }
 
     return (
@@ -112,7 +115,7 @@ function Auction() {
                                     <div className='ml-8'>
                                         <h3 className='text-[14px] text-[var(--second-text-color)]'>Thời gian đăng ký còn lại</h3>
                                         <h3 className='text-[16px] font-semibold'>
-                                            {remainingTime(item)}
+                                            {remainingTime(item)} ngày
                                         </h3>
                                     </div>
                                 </div>
