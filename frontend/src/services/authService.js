@@ -11,3 +11,28 @@ export const login = async (phone_number, password) => {
         console.log('[AUTH SERVICE]', error)
     }
 };
+
+export const signUp = async (
+    phone_number,
+    password,
+    first_name,
+    last_name,
+    role,
+    dob,
+    address,
+) => {
+    try {
+        const res = await httpRequest.post('sign-up', {
+            phone_number,
+            password,
+            role,
+            first_name,
+            last_name,
+            dob,
+            address,
+        });
+        return res;
+    } catch (error) {
+        console.log('[AUTH SERVICE]', error)
+    }
+};

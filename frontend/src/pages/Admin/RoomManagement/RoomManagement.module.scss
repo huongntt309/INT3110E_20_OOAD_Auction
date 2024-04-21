@@ -1,0 +1,14 @@
+.status {
+    background-color: #e6c8c8;
+    color: #b06f6f;
+
+    &.success {
+        background-color: #c8e6c9;
+        color: #6fb073;
+    }
+
+    &.pending {
+        background-color: #fff0c2;
+        color: #ccb753;
+    }
+}
