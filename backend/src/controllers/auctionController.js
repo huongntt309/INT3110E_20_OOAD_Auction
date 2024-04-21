@@ -4,20 +4,19 @@ import {
     getAllAuctions,
     updateAuction,
     deleteAuction,
+    getAuctionsByUser,
     closeAuction,
     openAuction,
-    updateAllAuctionStatusByTime
+    updateAllAuctionStatusByTime,
+    getAllBidsByAuctionId,
 }
     from '../services/auctionService';
-
 
 
 const auctionController = {
     // Xử lý yêu cầu lấy tất cả các phiên đấu giá
     handleGetAllAuctions: async (req, res) => {
         try {
-            const currentTime = new Date();
-            console.log(currentTime);
             const auctions = await getAllAuctions();
             res.status(200).json(auctions);
         } catch (error) {
@@ -25,6 +24,19 @@ const auctionController = {
             res.status(500).json({ error: 'Internal server error' });
         }
     },
+
+    // Lấy các auction đã đăng ký và đang chờ đăng kí của 1 user
+    handleGetAuctionsByUser: async (req, res) => {
+        try {
+            const user_id = req.params.userId
+            const auctions = await getAuctionsByUser(user_id);
+            res.status(200).json(auctions);
+        } catch (error) {
+            console.error('Error getting all auctions:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+
 
     // Xử lý yêu cầu lấy thông tin một phiên đấu giá dựa trên auction_id
     handleGetAuctionById: async (req, res) => {
@@ -41,7 +53,17 @@ const auctionController = {
             res.status(500).json({ error: 'Internal server error' });
         }
     },
-
+    handleGetAllBidsByAuctionId: async(req, res) => {
+    try {
+        const auction_id = req.params.auctionId;
+        console.log(auction_id);
+        const bids = await getAllBidsByAuctionId(auction_id);
+        res.status(200).json(bids);
+    } catch (error) {
+        console.error('Error getting all bids:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+},
     // Xử lý yêu cầu tạo một phiên đấu giá mới
     handleCreateNewAuction: async (req, res) => {
         const auctionData = req.body;
@@ -82,6 +104,7 @@ const auctionController = {
             res.status(500).json({ error: 'Internal server error' });
         }
     }
+    
 };
 
 export default auctionController;

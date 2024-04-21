@@ -10,12 +10,16 @@ const {
     getAuctionIdByBidId,
     getBidByAuctionIdAndUserPhoneNumber,
     validateDeposit,
+    getAllBidsByAuctionId,
 } = require('../services/bidService');
+
+const BID_STATUS_PENDING = 'Pending';
+const BID_STATUS_VERIFY = 'Verified';
 
 const bidderController = {
     handleCreateNewBid: async (req, res) => {
         const { auction_id, user_phone_number, bid_price } = req.body;
-        const bid_status = 'PENDING';
+        const bid_status = BID_STATUS_PENDING;
 
         try {
             // Kiểm tra xem (auction_id, user_phone_number) đã tồn tại chưa
@@ -61,6 +65,8 @@ const bidderController = {
         }
     },
 
+    
+    
     handleGetAllBidsByAdmin: async (req, res) => {
         try {
             const bids = await getAllBids();

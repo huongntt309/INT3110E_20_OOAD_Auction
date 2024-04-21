@@ -3,7 +3,7 @@ const PAYMENT_TYPE_DEPOSIT = "Deposit"
 const PAYMENT_STATUS_PENDING = "Pending" // waiting for admin verification
 const PAYMENT_STATUS_VERIFY = "Verify" // waiting for admin verification
 const PAYMENT_STATUS_REFUND = "Refund" // waiting for admin verification
-
+const BID_STATUS_VERIFY = "Verify" 
 // Thêm một bid mới
 async function addBid(bidData) {
     const { auction_id, user_phone_number, bid_price, bid_status } = bidData;
@@ -41,7 +41,7 @@ async function getAuctionIdByBidId(bidId) {
     }
 }
 
-async function getBidByAuctionIdAndUserPhoneNumber(auctionId, phoneNumber) {
+async function getBidByAuctionIdAndUserPhoneNuBImber(auctionId, phoneNumber) {
     const query = 'SELECT * FROM bids WHERE auction_id = ? AND user_phone_number = ?';
     try {
         const bid = await global.db.get(query, [auctionId, phoneNumber]);
@@ -87,12 +87,29 @@ async function updateBid(bidId, newData) {
     }
 };
 
+// Cập nhật thông tin của một bid
+async function updateBidStatus(bidId, bid_status) {
+
+    const query = `
+      UPDATE bids
+      SET bid_status = ?
+      WHERE bid_id = ?
+    `;
+    try {
+        await global.db.run(query, [bid_status, bidId]);
+        console.log('Bid updated successfully.');
+    } catch (error) {
+        console.error('Error updating bid:', error);
+    }
+};
+
+
 // Xóa một bid dựa trên bid_id
 async function deleteBid(bidId) {
     const query = 'DELETE FROM bids WHERE bid_id = ?';
     try {
         await global.db.run(query, [bidId]);
-        
+
         console.log('Bid deleted successfully.');
     } catch (error) {
         console.error('Error deleting bid:', error);
@@ -137,6 +154,28 @@ async function validateDeposit(bid_id) {
     }
 }
 
+async function updateAllBidStatusByTime() {
+    try {
+        // Retrieve bids that meet the conditions from the payments table
+        const query = `
+            SELECT b.bid_id, b.bid_status
+            FROM bids b
+            JOIN payments p ON b.bid_id = p.bid_id
+            WHERE p.payment_type = 'Deposit' AND p.payment_status = 'Verify'
+        `;
+        const rows = await global.db.all(query);
+
+        // Iterate through the retrieved bids and update their status
+        for (const row of rows) {
+            await updateBidStatus(row.bid_id, BID_STATUS_VERIFY); // You need to define the new status here
+        }
+
+        console.log('All bids updated successfully.');
+    } catch (error) {
+        console.error('Error updating bids:', error);
+    }
+}
+
 
 
 export {
@@ -145,9 +184,11 @@ export {
     getAllBids,
     deleteBid,
     updateBid,
+    updateBidStatus,
     refreshBidWinner,
     getAuctionIdByBidId,
     getAllBidsByBidder,
-    getBidByAuctionIdAndUserPhoneNumber,
+    updateAllBidStatusByTime,
+    // getBidByAuctionIdAndUserPhoneNumber,
     validateDeposit
 };

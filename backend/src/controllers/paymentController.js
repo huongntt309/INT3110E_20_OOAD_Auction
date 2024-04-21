@@ -1,3 +1,4 @@
+const { updateBidStatus } = require('../services/bidService');
 const {
     addPayment,
     getPaymentById,
@@ -12,7 +13,7 @@ const PAYMENT_TYPE_DEPOSIT = "Deposit"
 const PAYMENT_STATUS_PENDING = "Pending" // waiting for admin verification
 const PAYMENT_STATUS_VERIFY = "Verify" // waiting for admin verification
 const PAYMENT_STATUS_REFUND = "Refund" // waiting for admin verification
-
+const BID_STATUS_VERIFY = "Verify" 
 const paymentController = {
     // Hàm xử lý thêm thanh toán mới
     handleAddPayment: async (req, res) => {
@@ -101,7 +102,9 @@ const paymentController = {
         try {
             const { id } = req.params;
             await updatePayment(id, PAYMENT_STATUS_VERIFY);
-            res.status(200).json({ message: 'Payment updated verify successfully' });
+            await updateBidStatus(id, BID_STATUS_VERIFY);
+
+            res.status(200).json({ message: 'Payment + Bid updated verify successfully' });
         } catch (error) {
             console.error('Error updating payment:', error);
             res.status(500).json({ error: 'Internal server error' });
