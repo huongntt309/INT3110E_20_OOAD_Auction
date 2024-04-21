@@ -7,10 +7,10 @@ import {
     getAuctionsByUser,
     closeAuction,
     openAuction,
-    updateAllAuctionStatusByTime
+    updateAllAuctionStatusByTime,
+    getAllBidsByAuctionId,
 }
     from '../services/auctionService';
-
 
 
 const auctionController = {
@@ -53,7 +53,17 @@ const auctionController = {
             res.status(500).json({ error: 'Internal server error' });
         }
     },
-
+    handleGetAllBidsByAuctionId: async(req, res) => {
+    try {
+        const auction_id = req.params.auctionId;
+        console.log(auction_id);
+        const bids = await getAllBidsByAuctionId(auction_id);
+        res.status(200).json(bids);
+    } catch (error) {
+        console.error('Error getting all bids:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+},
     // Xử lý yêu cầu tạo một phiên đấu giá mới
     handleCreateNewAuction: async (req, res) => {
         const auctionData = req.body;

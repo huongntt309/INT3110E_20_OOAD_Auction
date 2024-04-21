@@ -10,6 +10,7 @@ const {
     getAuctionIdByBidId,
     getBidByAuctionIdAndUserPhoneNumber,
     validateDeposit,
+    getAllBidsByAuctionId,
 } = require('../services/bidService');
 
 const BID_STATUS_PENDING = 'Pending';
@@ -64,6 +65,8 @@ const bidderController = {
         }
     },
 
+    
+    
     handleGetAllBidsByAdmin: async (req, res) => {
         try {
             const bids = await getAllBids();

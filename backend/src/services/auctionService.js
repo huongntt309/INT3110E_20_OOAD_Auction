@@ -93,6 +93,16 @@ async function getAllAuctions() {
     }
 };
 
+async function getAllBidsByAuctionId(auction_id) {
+    const query = 'SELECT * FROM bids WHERE auction_id = ?';
+    try {
+        const bids = await global.db.get(query, [auction_id]);
+        return bids;
+    } catch (error) {
+        console.error('Error getting bids:', error);
+    }
+};
+
 // Cập nhật thông tin của một phiên đấu giá
 async function updateAuction(auctionId, newData) {
     const { plate_id, start_date, end_date, auction_status, bid_winner_id, city, plate_type, vehicle_type } = newData;
@@ -224,4 +234,5 @@ export {
     pendingAuction,
     getAuctionsByUser,
     updateAllAuctionStatusByTime,
+    getAllBidsByAuctionId,
 };
