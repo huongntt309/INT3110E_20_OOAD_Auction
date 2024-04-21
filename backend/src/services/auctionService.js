@@ -46,6 +46,37 @@ async function getAuctionById(auctionId) {
     }
 };
 
+
+async function getAuctionsByUser(user_phone_number) {
+    try {
+        // Select bids with bid_status = "Verify" or "PENDING" and user_phone_number = user_phone_number
+        const query = `
+            SELECT auction_id, bid_status
+            FROM bids
+            WHERE user_phone_number = ? AND bid_status IN ('Verify', 'PENDING')
+        `;
+        // Execute the query to get both "Verify" and "PENDING" bids
+        const rows = await global.db.all(query, [user_phone_number]);
+
+        const auctions = {
+            'Verify': [],
+            'PENDING': []
+        };
+
+        // Retrieve auction information for each auction_id
+        for (const row of rows) {
+            const auction = await getAuctionById(row.auction_id);
+            auctions[row.bid_status].push(auction);
+        }
+
+        return auctions;
+    } catch (error) {
+        console.error('Error getting auctions:', error);
+    }
+}
+
+
+
 // Đọc tất cả các phiên đấu giá
 async function getAllAuctions() {
     const query = `
@@ -191,5 +222,6 @@ export {
     closeAuction,
     openAuction,
     pendingAuction,
+    getAuctionsByUser,
     updateAllAuctionStatusByTime,
 };

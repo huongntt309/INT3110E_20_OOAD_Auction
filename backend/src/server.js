@@ -9,6 +9,7 @@ import auctionRoutes from "./routes/auctionRoutes";
 import bidRoutes from "./routes/bidRoutes";
 import paymentRoutes from "./routes/paymentRoutes";
 import { updateAllAuctionStatusByTime } from './services/auctionService';
+import { updateAllBidStatusByTime } from './services/bidService';
 const app = express();
 
 const port = process.env.PORT || 8081;
@@ -38,6 +39,7 @@ global.db = null;
 const updateAuctionStatusDaily = async () => {
   cron.schedule('0 0 * * *', async () => {
     await updateAllAuctionStatusByTime();
+    await updateAllBidStatusByTime();
   });
 }
 
