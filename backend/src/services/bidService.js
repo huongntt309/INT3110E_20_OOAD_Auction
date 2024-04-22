@@ -41,7 +41,7 @@ async function getAuctionIdByBidId(bidId) {
     }
 }
 
-async function getBidByAuctionIdAndUserPhoneNuBImber(auctionId, phoneNumber) {
+async function getBidByAuctionIdAndUserPhoneNumber(auctionId, phoneNumber) {
     const query = 'SELECT * FROM bids WHERE auction_id = ? AND user_phone_number = ?';
     try {
         const bid = await global.db.get(query, [auctionId, phoneNumber]);
@@ -50,6 +50,7 @@ async function getBidByAuctionIdAndUserPhoneNuBImber(auctionId, phoneNumber) {
         console.error('Error getting bid:', error);
     }
 }
+
 // Đọc tất cả các bids
 async function getAllBids() {
     const query = 'SELECT * FROM bids';
@@ -189,6 +190,6 @@ export {
     getAuctionIdByBidId,
     getAllBidsByBidder,
     updateAllBidStatusByTime,
-    // getBidByAuctionIdAndUserPhoneNumber,
+
     validateDeposit
 };

@@ -10,7 +10,6 @@ const {
     getAuctionIdByBidId,
     getBidByAuctionIdAndUserPhoneNumber,
     validateDeposit,
-    getAllBidsByAuctionId,
 } = require('../services/bidService');
 
 const BID_STATUS_PENDING = 'Pending';
