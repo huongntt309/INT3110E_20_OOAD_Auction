@@ -6,9 +6,11 @@ import Button from '~/components/Button';
 import config from '~/config';
 import { authUserContext } from '~/App';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { toast } from 'react-toastify';
 
 import * as bidService from '~/services/bidService';
+import * as paymentService from '~/services/paymentService';
 
 function RoomManagement() {
     const location = useLocation();
@@ -28,9 +30,15 @@ function RoomManagement() {
                 data.sort((a, b) => (b.bid_price - a.bid_price))
                 // Filter data by: auction_id
                 data = data.filter((bid) => (bid.auction_id === auction.auction_id));
-                // console.log('[ROOM]',  data);
+                console.log('[ROOM]',  data);
                 if (data.length > 0) setAllBids(data);
                 else setAllBids();
+            });
+        bidService
+            .getAllBids(token)
+            .then((data) => {
+                data = data.filter((bid) => (bid.auction_id === auction.auction_id));
+                setAllUsers(data);
             });
     }
 
@@ -70,6 +78,19 @@ function RoomManagement() {
         return value;
     }
 
+    const handleVerifyDeposit = (user) => {
+        paymentService
+            .verifyDeposit(user.bid_id)
+            .then((data) => {
+                if (data?.message) {
+                    toast.success(`Xác nhận thanh toán cho User ${user.user_phone_number}`);
+                    fetchData();
+                } else {
+                    toast.error(data?.error);
+                }
+            })
+    } 
+
     return (
         <div className="p-16">
             <div>
@@ -93,18 +114,32 @@ function RoomManagement() {
                         <div>
                             <h3 className='uppercase font-semibold text-center'>Danh sách người tham gia</h3>
                             <div className='h-[220px] overflow-scroll'>
-                                {allBids && allBids.map((bid, index) => (
+                                {allUsers && allUsers.map((user, index) => (
                                     <div className='flex justify-between items-center' key={index}>
-                                        <div className='mt-4 mb-[21px] font-semibold'>
-                                            {bid && inputPhone(bid.user_phone_number)}
+                                        <div>
+                                            <div className='mt-4 font-semibold'>
+                                                {user && inputPhone(user.user_phone_number)}
+                                            </div>
+                                            <div className='uppercase text-[var(--second-text-color)]'>
+                                                {user && user.bid_status}
+                                            </div>
                                         </div>
+                                        {(user.bid_status.toLowerCase() === 'pending') &&
+                                            <Button
+                                                className='w-[30px] h-[30px] rounded-full'
+                                                onClick={() => handleVerifyDeposit(user)}
+                                                primary
+                                            >
+                                                <FontAwesomeIcon icon={faCheck} />
+                                            </Button>
+                                        }
                                     </div>
                                 ))}
                             </div>
                             <div className='flex items-center mb-8 mx-auto px-8 py-2 w-fit border-[0px] border-[var(--primary)] rounded-[8px]'>
                                 <span>Tổng số người:</span>
                                 <span className='ml-4 text-[20px] font-bold'>
-                                    {(allBids && allBids.length) || '0'} người
+                                    {(allUsers && allUsers.length) || '0'} người
                                 </span>
                             </div>
                         </div>
@@ -120,7 +155,7 @@ function RoomManagement() {
                                             >
                                                 {bid && inputCurrency(bid.bid_price.toString())} VNĐ
                                             </h3>
-                                            <p className='text-[14px] text-[var(--second-text-color)]'>
+                                            <p className='text-[14px] text-[var(--second-text-color)] uppercase'>
                                                 {bid && bid.bid_status}
                                             </p>
                                         </div>
@@ -147,7 +182,7 @@ function RoomManagement() {
                             <FontAwesomeIcon icon={faChevronLeft} />
                             <span className='ml-4'>Quay lại</span>
                         </Button>
-                        <div className='flex'>
+                        {/* <div className='flex'>
                             <Button
                                 className='p-[9px_16px] ml-4'
                                 primary
@@ -160,7 +195,7 @@ function RoomManagement() {
                             >
                                 Kết thúc đấu giá
                             </Button>
-                        </div>
+                        </div> */}
                     </div>
                 </Card>
             </div>

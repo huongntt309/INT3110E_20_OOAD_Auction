@@ -3,24 +3,16 @@ import { useState } from "react";
 import styles from './AuctionForm.module.scss';
 
 import Input from '~/components/Input';
-import Select from '~/components/Select';
 import CustomForm from "../CustomForm";
 import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
-
-const STATUS = [
-    { name: 'Đang diễn ra'},
-    { name: 'Đã kết thúc'},
-    { name: 'Chưa diễn ra'},
-];
 
 function AuctionForm({ item, onClose = () => {}, updateData = () => {}, service }) {
     const [inputs, setInputs] = useState({
         plate_id: item !== undefined ? item.plate_id : '',
         start_date: item !== undefined ? item.start_date : '',
         end_date: item !== undefined ? item.end_date : '',
-        auction_status: item !== undefined ? item.auction_status : '',
         bid_winner_id: "null",
         city: item !== undefined ? item.city : '',
         plate_type: item !== undefined ? item.plate_type : '',
@@ -96,13 +88,15 @@ function AuctionForm({ item, onClose = () => {}, updateData = () => {}, service 
                     readOnly={item !== undefined}
                 />
                 
-                <Select 
+                <Input 
                     className={cx('form-input')}
-                    data={STATUS}
-                    defaultValue={inputs.auction_status || 'Chưa diễn ra'}
-                    label='Trạng thái'
+                    type='text'
+                    placeholder='Địa chỉ'
+                    label='Địa chỉ'
                     inline
-                    name='auction_status'
+                    name='city'
+                    value={inputs.city}
+                    onChange={handleInputChange}
                 />
             </div>
             
@@ -129,17 +123,6 @@ function AuctionForm({ item, onClose = () => {}, updateData = () => {}, service 
                     onChange={handleInputChange}
                 />
             </div>
-            
-            <Input 
-                className={cx('form-input')}
-                type='text'
-                placeholder='Địa chỉ'
-                label='Địa chỉ'
-                inline
-                name='city'
-                value={inputs.city}
-                onChange={handleInputChange}
-            />
             
             <div className='grid grid-cols-2 gap-8'>
                 <Input 

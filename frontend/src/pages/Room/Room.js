@@ -5,6 +5,7 @@ import Input from '~/components/Input';
 import Button from '~/components/Button';
 import Modal from '~/components/Modal';
 import BidResult from '~/components/Form/BidResult';
+import DepositForm from "~/components/Form/DepositForm";
 import config from '~/config';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -21,7 +22,10 @@ function Room() {
 
     const [bid, setBid] = useState('');
     const [allBids, setAllBids] = useState();
+    const [bidId, setBidId] = useState();
+    const [bidStatus, setBidStatus] = useState('PENDING');
 
+    const [modal, setModal] = useState();
     const [showModal, setShowModal] = useState(false);
     const [win, setWin] = useState(false);
 
@@ -33,9 +37,10 @@ function Room() {
                 data.sort((a, b) => (b.bid_price - a.bid_price))
                 // Filter data by: auction_id
                 data = data.filter((bid) => (bid.auction_id === item.auction_id));
-                // console.log('[ROOM]',  data);
+                console.log('[ROOM]',  data);
                 if (data.length > 0) setAllBids(data.slice(0, 3));
                 else setAllBids();
+                return data;
             });
     }
 
@@ -112,12 +117,46 @@ function Room() {
         }
     }
 
+    useEffect(() => {
+        if (allBids) {
+            const bid = allBids.find((item) => item.user_phone_number === user.phone_number);
+            setBidId(bid.bid_id);
+            setBidStatus(bid.bid_status);
+        }
+    }, [allBids]);
+    
+    useEffect(() => {
+        if (bidId && bidStatus === 'PENDING') {
+            // console.log(bidId);
+            handleDeposit(item, bidId);
+        }
+    }, [bidId]);
+
     const handleShowModal = () => {
         setShowModal(true);
     } 
 
     const handleCloseModal = () => {
         setShowModal(false);
+    }
+
+    // Handle deposit
+    const handleDeposit = (item, bid_id) => {
+        handleShowModal();
+        setModal(<DepositForm item={item} bidId={bid_id} onClose={handleCloseModal} />);
+    }
+
+    // Show result
+    const showResult = () => {
+        handleShowModal();
+        setModal(
+            <BidResult 
+                item={item}
+                win={win}
+                winning_bid={allBids && inputCurrency(allBids[0].bid_price.toString())}
+                onClose={handleCloseModal}
+            />
+        );
     }
 
     return (
@@ -172,7 +211,7 @@ function Room() {
                                         >
                                             {bid && inputCurrency(bid.bid_price.toString())} VNĐ
                                         </h3>
-                                        <p className='text-[14px] text-[var(--second-text-color)]'>
+                                        <p className='text-[14px] text-[var(--second-text-color)] uppercase'>
                                             {bid && bid.bid_status}
                                         </p>
                                     </div>
@@ -203,12 +242,7 @@ function Room() {
 
                 {showModal && 
                     <Modal className='w-2/5'>
-                        <BidResult 
-                            item={item}
-                            win={win}
-                            winning_bid={allBids && inputCurrency(allBids[0].bid_price.toString())}
-                            onClose={handleCloseModal}
-                        />
+                        {modal}
                     </Modal>
                 }
             </div>

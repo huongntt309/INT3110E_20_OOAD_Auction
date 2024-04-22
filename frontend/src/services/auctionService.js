@@ -72,3 +72,30 @@ export const deleteItem = async (id) => {
         console.log(error);
     }
 }
+
+export const getRegisterItems = async (phone_number) => {
+    try {
+        const res = await httpRequest.get(`auction/user/${phone_number}`);
+        return res;
+    } catch (error) {
+        console.log('[PRODUCTS SERVICE]', error);
+    }
+}
+
+export const getAllUsers = async (id) => {
+    try {
+        const res = await httpRequest.get(`auction/bidder/${id}`);
+        return res;
+    } catch (error) {
+        console.log('[PRODUCTS SERVICE]', error);
+    }
+}
+
+export const getAllDeposits = async (id) => {
+    try {
+        const res = await httpRequest.get(`auction/bid/${id}`);
+        return res;
+    } catch (error) {
+        console.log('[PRODUCTS SERVICE]', error);
+    }
+}
