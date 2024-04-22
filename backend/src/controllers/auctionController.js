@@ -7,7 +7,6 @@ import {
     getAuctionsByUser,
     closeAuction,
     openAuction,
-    updateAllAuctionStatusByTime,
     getAllBidsByAuctionId,
     updateAllAuctionStatusByTime,
     getAllBiddersAndBidPriceByAuctionId,

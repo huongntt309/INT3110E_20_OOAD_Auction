@@ -35,20 +35,18 @@ app.use("/api/v1", paymentRoutes);
 // Khai báo db như một biến global
 global.db = null;
 
-// everyday 10s 1 lượt
 const updateAuctionStatusDaily = async () => {
   cron.schedule('0 0 * * *', async () => {
     await updateAllAuctionStatusByTime();
+  });
+}
+
+const updateBidStatusEvery5Second = async () => {
+  cron.schedule('*/5 * * * * *', async () => {
     await updateAllBidStatusByTime();
   });
 }
 
-const updateAuctionStatusEveryMinute = async () => {
-  cron.schedule('0 */1 * * * *', async () => {
-    await updateAllAuctionStatusByTime();
-    await updateAllBidStatusByTime();
-  });
-}
 // Khai báo hàm async để chạy ứng dụng
 (async function () {
   try {
@@ -63,7 +61,8 @@ const updateAuctionStatusEveryMinute = async () => {
     // Bắt đầu server
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
-      updateAuctionStatusEveryMinute();
+      updateAuctionStatusDaily();
+      updateBidStatusEvery5Second();
     });
   } catch (error) {
     console.error("Error connecting to SQLite:", error);

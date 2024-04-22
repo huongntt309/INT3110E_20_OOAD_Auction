@@ -4,6 +4,7 @@ const PAYMENT_STATUS_PENDING = "Pending" // waiting for admin verification
 const PAYMENT_STATUS_VERIFY = "Verify" // waiting for admin verification
 const PAYMENT_STATUS_REFUND = "Refund" // waiting for admin verification
 const BID_STATUS_VERIFY = "Verify" 
+
 // Thêm một bid mới
 async function addBid(bidData) {
     const { auction_id, user_phone_number, bid_price, bid_status } = bidData;
@@ -12,13 +13,15 @@ async function addBid(bidData) {
       VALUES (?, ?, ?, ?)
     `;
     try {
-        await global.db.run(query, [auction_id, user_phone_number, bid_price, bid_status]);
-        console.log('Bid added successfully.');
+        const result = await global.db.run(query, [auction_id, user_phone_number, bid_price, bid_status]);
+        const insertedId = result.lastID;
+        console.log('Bid added successfully. ID:', insertedId);
+        return insertedId;
     } catch (error) {
         console.error('Error adding bid:', error);
+        return null;
     }
 };
-
 // Đọc thông tin của một bid dựa trên bid_id
 async function getBidById(bidId) {
     const query = 'SELECT * FROM bids WHERE bid_id = ?';
@@ -190,6 +193,6 @@ export {
     getAuctionIdByBidId,
     getAllBidsByBidder,
     updateAllBidStatusByTime,
-
+    getBidByAuctionIdAndUserPhoneNumber,
     validateDeposit
 };

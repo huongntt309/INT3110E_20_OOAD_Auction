@@ -1,4 +1,4 @@
-const { updateBidStatus } = require('../services/bidService');
+const { updateBidStatus, createBid } = require('../services/bidService');
 const {
     addPayment,
     getPaymentById,
@@ -35,17 +35,21 @@ const paymentController = {
             res.status(500).json({ error: 'Internal server error' });
         }
     },
+    
     handleAddDeposit: async (req, res) => {
         try {
-            const { bid_id } = req.body;
+            const { auction_id, user_phone_number } = req.body;
+            const bid_price = 0;
+            const bid_status = BID_STATUS_PENDING;
+            const bidData = { auction_id, user_phone_number, bid_price, bid_status } ;
+            const bid_id = await addBid(bidData);
+            
             if (!bid_id ) {
                 return res.status(400).json({ error: 'Missing required fields' });
             }
 
-
             const payment_type = PAYMENT_TYPE_DEPOSIT
             const payment_status = PAYMENT_STATUS_PENDING
-
 
             await addPayment({ bid_id, payment_type, payment_status });
             res.status(201).json({ message: 'Deposit added successfully' });
