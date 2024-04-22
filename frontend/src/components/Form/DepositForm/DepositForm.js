@@ -5,9 +5,13 @@ import { toast } from 'react-toastify';
 
 import * as paymentService from '~/services/paymentService';
 
-function DepositForm({ item, onClose }) {
+function DepositForm({ item, bidId, onClose }) {
     const handleSubmit = () => {
-        toast.success('Đặt cọc thành công!');
+        paymentService
+            .addDeposit(bidId)
+            .then(() => {
+                toast.success('Đặt cọc thành công!');
+            });
         onClose();
     }
 

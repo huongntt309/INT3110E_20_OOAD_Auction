@@ -8,3 +8,23 @@ export const getAllPaymentsAdmin = async () => {
         console.log('[PAYMENT SERVICE]', error);
     }
 };
+
+export const addDeposit = async (bid_id) => {
+    try {
+        const res = await httpRequest.post('deposit', {
+            bid_id,
+        });
+        return res;
+    } catch (error) {
+        console.log('[PAYMENT SERVICE]', error);
+    }
+};
+
+export const verifyDeposit = async (bid_id) => {
+    try {
+        const res = await httpRequest.put(`payment-verify/${bid_id}`);
+        return res;
+    } catch (error) {
+        console.log('[PAYMENT SERVICE]', error);
+    }
+};
