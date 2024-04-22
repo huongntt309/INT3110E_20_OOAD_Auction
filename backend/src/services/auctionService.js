@@ -150,6 +150,7 @@ async function updateAuction(auctionId, newData) {
     try {
         await global.db.run(queryAuction, [plate_id, start_date, end_date, auction_status, bid_winner_id, int_auctionId]);
         await global.db.run(queryPlate, [city, plate_type, vehicle_type, plate_id]);
+        await updateAllAuctionStatusByTime();
         console.log('Auction updated successfully.');
     } catch (error) {
         console.error('Error updating auction:', error);
