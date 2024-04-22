@@ -30,15 +30,29 @@ function WaitingAuction() {
     const [data, setData] = useState();
     const [showModal, setShowModal] = useState(false);
     const [item, setItem] = useState();
-    // const context = useContext(authUserContext);
+    const context = useContext(authUserContext);
+    const user = context && context.authUser?.user;
 
     // Pagination
     const [pageCount, setPageCount] = useState();
 
     const fetchData = () => {
         auctionService
-            .getAllItems()
+            .getRegisterItems(user.phone_number)
             .then((data) => {
+                const verifyData = [...data?.Verify];
+                const pendingData = [...data?.PENDING];
+                if (verifyData.length > 0) {
+                    verifyData.forEach((item) => {
+                        item.status = 'verify';
+                    });
+                }
+                if (pendingData.length > 0) {
+                    pendingData.forEach((item) => {
+                        item.status = 'pending';
+                    })
+                }
+                data = [...verifyData, ...pendingData];
                 const length = Math.ceil(data.length / PER_PAGE);
                 setPageCount(length);
                 return { data, length };
