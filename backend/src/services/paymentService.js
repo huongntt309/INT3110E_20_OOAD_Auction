@@ -25,19 +25,24 @@ async function getPaymentById(paymentId) {
     }
 }
 
-// Đọc tất cả các thanh toán
-async function getAllPaymentsByAdmin() {
-    const query = 'SELECT * FROM payments';
+async function getAllPaymentsWithUsersByAdmin() {
+    const query = `
+        SELECT p.payment_id, b.user_phone_number, a.plate_id, p.payment_type, p.payment_status
+        FROM payments p
+        INNER JOIN bids b ON p.bid_id = b.bid_id
+        INNER JOIN auctions a ON b.auction_id = a.auction_id
+    `;
     try {
         const payments = await db.all(query);
         return payments;
     } catch (error) {
         console.error('Error getting payments:', error);
+        return null;
     }
 }
 
+
 // Đọc tất cả các thanh toán của 1 người user
-// TODO: cần xử lý logic chéo 2 bảng, để sau, tích hợp đã 
 async function getAllPaymentsByBidder(user_phone_number) {
     // 
     const query = `SELECT payments.*
@@ -81,8 +86,8 @@ async function deletePayment(paymentId) {
 export {
     addPayment,
     getPaymentById,
-    getAllPaymentsByAdmin,
     getAllPaymentsByBidder,
     updatePayment,
     deletePayment,
+    getAllPaymentsWithUsersByAdmin,
 };

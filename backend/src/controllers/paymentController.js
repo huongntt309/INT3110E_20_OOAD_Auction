@@ -1,8 +1,8 @@
-const { updateBidStatus, createBid } = require('../services/bidService');
+const { updateBidStatus, addBid } = require('../services/bidService');
 const {
     addPayment,
     getPaymentById,
-    getAllPaymentsByAdmin,
+    getAllPaymentsWithUsersByAdmin,
     getAllPaymentsByBidder,
     updatePayment,
     deletePayment,
@@ -14,6 +14,8 @@ const PAYMENT_STATUS_PENDING = "Pending" // waiting for admin verification
 const PAYMENT_STATUS_VERIFY = "Verify" // waiting for admin verification
 const PAYMENT_STATUS_REFUND = "Refund" // waiting for admin verification
 const BID_STATUS_VERIFY = "Verify" 
+const BID_STATUS_PENDING = "Pending" // waiting for admin verification
+
 const paymentController = {
     // Hàm xử lý thêm thanh toán mới
     handleAddPayment: async (req, res) => {
@@ -78,8 +80,8 @@ const paymentController = {
     // Hàm xử lý đọc tất cả các thanh toán (cho admin)
     handleGetAllPaymentsByAdmin: async (req, res) => {
         try {
-            const payments = await getAllPaymentsByAdmin();
-            res.status(200).json(payments);
+            const paymentsWithUsers = await getAllPaymentsWithUsersByAdmin();
+            res.status(200).json(paymentsWithUsers);
         } catch (error) {
             console.error('Error getting all payments (admin):', error);
             res.status(500).json({ error: 'Internal server error' });
@@ -89,9 +91,6 @@ const paymentController = {
     // Hàm xử lý đọc tất cả các thanh toán của một người dùng (cho bidder)
     handleGetAllPaymentsByBidder: async (req, res) => {
         try {
-            // cần auth
-            // TODO: Implement logic to get all payments of a bidder
-            
             const user_phone_number = req.body.phone_number;
             const payments = await getAllPaymentsByBidder(user_phone_number);
             res.status(200).json(payments);
