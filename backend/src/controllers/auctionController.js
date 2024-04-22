@@ -9,7 +9,7 @@ import {
     openAuction,
     updateAllAuctionStatusByTime,
     getAllBidsByAuctionId,
-    
+    updateAllAuctionStatusByTime,
     getAllBiddersAndBidPriceByAuctionId,
 }
     from '../services/auctionService';
@@ -83,7 +83,7 @@ const auctionController = {
             const { plate_id, start_date, end_date, city, plate_type, vehicle_type } = auctionData;
             const newAuctionId = await addAuction(auctionData);
 
-            // await updateAuctionStatusByTime(newAuctionId, start_date, end_date);
+            await updateAllAuctionStatusByTime();
 
             res.status(201).json({ message: 'Auction created successfully' });
         } catch (error) {
