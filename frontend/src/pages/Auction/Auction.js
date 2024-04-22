@@ -9,7 +9,7 @@ import Modal from "~/components/Modal";
 import Pagination from '~/components/Pagination';
 import PlateDetail from "~/components/Form/PlateDetail";
 import config from '~/config';
-// import DepositForm from "~/components/Form/DepositForm";
+import DepositForm from "~/components/Form/DepositForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { toast } from 'react-toastify';
@@ -69,10 +69,10 @@ function Auction() {
     }
 
     // // Handle deposit
-    // const handleDeposit = (item) => {
-    //     // handleShowModal();
-    //     // setModal(<DepositForm item={item} onClose={handleCloseModal} />)
-    // }
+    const handleDeposit = (item) => {
+        handleShowModal();
+        setModal(<DepositForm item={item} onClose={handleCloseModal} />)
+    }
 
     // Show detail
     const showDetail = (item) => {
@@ -123,16 +123,16 @@ function Auction() {
                             <div className='flex flex-col items-center mt-4'>
                                 <Button 
                                     className='flex justify-center p-[9px_16px] mt-4 w-full' 
-                                    to={context.authUser ? config.routes.room : config.routes.login} 
-                                    state={item} 
+                                    // to={context.authUser ? config.routes.room : config.routes.login} 
+                                    // state={item} 
                                     primary
                                     onClick={() => {
                                         if (!context.authUser) {
                                             toast.error('Vui lòng đăng nhập!');
                                         } 
-                                        // else {
-                                        //     handleDeposit(item);
-                                        // }
+                                        else {
+                                            handleDeposit(item);
+                                        }
                                     }}
                                 >
                                     Đăng ký đấu giá
