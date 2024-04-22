@@ -188,6 +188,7 @@ export {
     updateBidStatus,
     refreshBidWinner,
     getAuctionIdByBidId,
+    getBidByAuctionIdAndUserPhoneNumber,
     getAllBidsByBidder,
     updateAllBidStatusByTime,
 

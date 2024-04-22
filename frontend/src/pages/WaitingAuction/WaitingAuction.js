@@ -50,9 +50,10 @@ function WaitingAuction() {
                 if (pendingData.length > 0) {
                     pendingData.forEach((item) => {
                         item.status = 'pending';
-                    })
+                    });
                 }
                 data = [...verifyData, ...pendingData];
+                console.log(data);
                 const length = Math.ceil(data.length / PER_PAGE);
                 setPageCount(length);
                 return { data, length };

@@ -15,9 +15,9 @@ export const login = async (phone_number, password) => {
 export const signUp = async (
     phone_number,
     password,
+    role,
     first_name,
     last_name,
-    role,
     dob,
     address,
 ) => {

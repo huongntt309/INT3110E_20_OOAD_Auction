@@ -117,20 +117,20 @@ function Room() {
         }
     }
 
-    useEffect(() => {
-        if (allBids) {
-            const bid = allBids.find((item) => item.user_phone_number === user.phone_number);
-            setBidId(bid.bid_id);
-            setBidStatus(bid.bid_status);
-        }
-    }, [allBids]);
+    // useEffect(() => {
+    //     if (allBids) {
+    //         const bid = allBids.find((item) => item.user_phone_number === user.phone_number);
+    //         setBidId(bid.bid_id);
+    //         setBidStatus(bid.bid_status);
+    //     }
+    // }, [allBids]);
     
-    useEffect(() => {
-        if (bidId && bidStatus === 'PENDING') {
-            // console.log(bidId);
-            handleDeposit(item, bidId);
-        }
-    }, [bidId]);
+    // useEffect(() => {
+    //     // console.log('[ROOM]: bid_id', bidId);
+    //     if (bidId && bidStatus.toLowerCase() === 'pending') {
+    //         handleDeposit(item, bidId);
+    //     }
+    // }, [bidId]);
 
     const handleShowModal = () => {
         setShowModal(true);
@@ -141,10 +141,10 @@ function Room() {
     }
 
     // Handle deposit
-    const handleDeposit = (item, bid_id) => {
-        handleShowModal();
-        setModal(<DepositForm item={item} bidId={bid_id} onClose={handleCloseModal} />);
-    }
+    // const handleDeposit = (item, bid_id) => {
+    //     handleShowModal();
+    //     setModal(<DepositForm item={item} bidId={bid_id} onClose={handleCloseModal} />);
+    // }
 
     // Show result
     const showResult = () => {
