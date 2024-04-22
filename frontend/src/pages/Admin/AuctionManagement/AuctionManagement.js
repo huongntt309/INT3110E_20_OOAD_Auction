@@ -23,8 +23,11 @@ const TB_HEADER = [
     'Biển số',
     'ID',
     'Trạng thái',
+    'Ngày bắt đầu',
     'Ngày kết thúc',
     'Địa chỉ',
+    'Loại biển',
+    'Phương tiện',
     'Hành động',
 ];
 
@@ -58,6 +61,7 @@ function AuctionManagement() {
                 const startIndex = (page - 1) * perPage;
                 const endIndex = page * perPage;
 
+                console.log('[AUCTION MANAGEMENT]', data);
                 setData(data.data.reverse().slice(startIndex, endIndex));
             });
     }
@@ -116,8 +120,11 @@ function AuctionManagement() {
                                         {item.auction_status}
                                     </span>
                                 </td>
+                                <td>{item.start_date.split('-').reverse().join('/')}</td>
                                 <td>{item.end_date.split('-').reverse().join('/')}</td>
                                 <td>{item.city}</td>
+                                <td>{item.plate_type}</td>
+                                <td>{item.vehicle_type}</td>
                                 <td className='flex justify-center'>
                                     <Button 
                                         className='mx-[4px] w-[30px] h-[30px] rounded-full' 

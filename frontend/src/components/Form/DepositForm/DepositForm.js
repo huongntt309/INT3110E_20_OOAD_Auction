@@ -1,17 +1,36 @@
+import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CustomForm from '~/components/Form/CustomForm';
 import images from '~/assets/images';
 import Button from '~/components/Button';
+import config from '~/config';
 import { toast } from 'react-toastify';
+import { authUserContext } from '~/App';
 
 import * as paymentService from '~/services/paymentService';
 
-function DepositForm({ item, bidId, onClose }) {
+function DepositForm({ item, onClose }) {
+    const context = useContext(authUserContext);
+    const user = context && context.authUser?.user;
+    const navigate = useNavigate();
+
     const handleSubmit = () => {
         paymentService
-            .addDeposit(bidId)
-            .then(() => {
-                toast.success('Đặt cọc thành công!');
+            .addDeposit(
+                item.auction_id,
+                user.phone_number,
+            )
+            .then((data) => {
+                if (data?.message) {
+                    toast.success('Đặt cọc thành công!');
+                    setTimeout(() => {
+                        navigate(config.routes.waiting_auction);
+                    }, 200);
+                }
+                else if (data?.error)
+                    toast.error(data.error);
             });
+        // console.log('[DEPOSIT FORM]: auction_id, phone_number', item.auction_id, user.phone_number);
         onClose();
     }
 

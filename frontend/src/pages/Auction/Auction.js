@@ -52,6 +52,7 @@ function Auction() {
                 const startIndex = (page - 1) * perPage;
                 const endIndex = page * perPage;
 
+                console.log('[AUCTION]', data);
                 setData(data.data.slice(startIndex, endIndex));
             });
     }

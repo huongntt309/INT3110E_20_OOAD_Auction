@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import Input from '~/components/Input';
@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { authUserContext } from '~/App';
 
 import * as bidService from '~/services/bidService';
+import * as auctionService from '~/services/auctionService';
 
 function Room() {
     const location = useLocation();
@@ -22,12 +23,20 @@ function Room() {
 
     const [bid, setBid] = useState('');
     const [allBids, setAllBids] = useState();
-    const [bidId, setBidId] = useState();
-    const [bidStatus, setBidStatus] = useState('PENDING');
+    const [auction, setAuction] = useState();
+    // const [bidId, setBidId] = useState();
+    // const [bidStatus, setBidStatus] = useState('PENDING');
 
     const [modal, setModal] = useState();
     const [showModal, setShowModal] = useState(false);
     const [win, setWin] = useState(false);
+
+    // Time
+    const [days, setDays] = useState(0);
+    const [hours, setHours] = useState(0);
+    const [minutes, setMinutes] = useState(0);
+    const [seconds, setSeconds] = useState(0);
+    const intervalId = useRef();
 
     const fetchData = () => {
         bidService
@@ -37,10 +46,17 @@ function Room() {
                 data.sort((a, b) => (b.bid_price - a.bid_price))
                 // Filter data by: auction_id
                 data = data.filter((bid) => (bid.auction_id === item.auction_id));
-                console.log('[ROOM]',  data);
+                console.log('[ROOM]: bids', data);
+                // console.log('[ROOM]: item', item);
                 if (data.length > 0) setAllBids(data.slice(0, 3));
                 else setAllBids();
                 return data;
+            });
+        auctionService
+            .getItemById(item.auction_id)
+            .then((data) => {
+                console.log('[ROOM]: auction', data);
+                setAuction(data);
             });
     }
 
@@ -89,7 +105,7 @@ function Room() {
             toast.error('Vui lòng nhập Số tiền!');
             return false;
         }
-        if (allBids && (Number(bid.replaceAll(',', '')) < allBids[0].bid_price)) {
+        if (allBids && (Number(bid.replaceAll(',', '')) <= allBids[0].bid_price)) {
             toast.error('Vui lòng nhập Số tiền lớn hơn Giá hiện tại!');
             return false;
         }
@@ -97,7 +113,6 @@ function Room() {
     }
 
     const handleSubmit = () => {
-        // console.log('[ROOM]', item);
         if (validation()) {
             bidService
                 .createBid(
@@ -159,6 +174,49 @@ function Room() {
         );
     }
 
+    // Count down
+    const getTime = () => {
+        const end = new Date(`${auction && auction.end_date}T00:00`).getTime();
+
+        intervalId.current = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = end - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(distance % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
+            const minutes = Math.floor(distance % (1000 * 60 * 60) / (1000 * 60));
+            const seconds = Math.floor(distance % (1000 * 60) / 1000);
+
+            if (distance < 0) {
+                // Stop
+                clearInterval(intervalId.current);
+                setDays(0);
+                setHours(0);
+                setMinutes(0);
+                setSeconds(0);
+            } else {
+                // Update time
+                setDays(days);
+                setHours(hours);
+                setMinutes(minutes);
+                setSeconds(seconds);
+            }
+        }, 1000);
+
+        // console.log(`${days} days ${hours} hours ${minutes} minutes ${seconds} seconds `);
+    }
+    
+    useEffect(() => {
+        getTime();
+
+        return () => clearInterval(intervalId.current);
+    });
+
+    // Fetch data every second
+    useEffect(() => {
+        fetchData();
+    }, [seconds]);
+
     return (
         <div className='px-32 py-16'>
             <div>
@@ -167,17 +225,30 @@ function Room() {
                         <div className='mx-auto px-16 py-4 w-fit text-center border-[0px] border-[var(--primary)] rounded-[6px]'>
                             <h3 className='text-[20px] uppercase font-semibold'>Thời gian đấu giá còn lại</h3>
                             <div className='flex justify-evenly'>
-                                {/* {(item && '10:00') || '00:00'} */}
                                 <span className='flex flex-col items-center'>
                                     <span className='text-[60px] leading-[60px] text-[var(--primary)] font-["UKNumberPlate"]'>
-                                        {(item && '10') || '00'}
+                                        {(item && ((days >= 10) ? days : `0${days}`)) || '00'}
+                                    </span>
+                                    <span className='text-[16px] leading-[18px] font-normal'>Ngày</span>
+                                </span>
+                                <span className='text-[60px] leading-[60px] text-[var(--primary)] font-["UKNumberPlate"]'>:</span>
+                                <span className='flex flex-col items-center'>
+                                    <span className='text-[60px] leading-[60px] text-[var(--primary)] font-["UKNumberPlate"]'>
+                                        {(item && ((hours >= 10) ? hours : `0${hours}`)) || '00'}
+                                    </span>
+                                    <span className='text-[16px] leading-[18px] font-normal'>Giờ</span>
+                                </span>
+                                <span className='text-[60px] leading-[60px] text-[var(--primary)] font-["UKNumberPlate"]'>:</span>
+                                <span className='flex flex-col items-center'>
+                                    <span className='text-[60px] leading-[60px] text-[var(--primary)] font-["UKNumberPlate"]'>
+                                        {(item && ((minutes >= 10) ? minutes : `0${minutes}`)) || '00'}
                                     </span>
                                     <span className='text-[16px] leading-[18px] font-normal'>Phút</span>
                                 </span>
                                 <span className='text-[60px] leading-[60px] text-[var(--primary)] font-["UKNumberPlate"]'>:</span>
                                 <span className='flex flex-col items-center'>
                                     <span className='text-[60px] leading-[60px] text-[var(--primary)] font-["UKNumberPlate"]'>
-                                        {(item && '00') || '00'}
+                                        {(item && ((seconds >= 10) ? seconds : `0${seconds}`)) || '00'}
                                     </span>
                                     <span className='text-[16px] leading-[18px] font-normal'>Giây</span>
                                 </span>
@@ -236,7 +307,23 @@ function Room() {
                             value={inputCurrency(bid)}
                             onChange={(e) => setBid(e.target.value)}
                         />
-                        <Button className='p-[9px_16px] w-full' primary onClick={handleSubmit}>Đặt giá</Button>
+                        {(auction && auction.auction_status.toLowerCase() === 'đang diễn ra') ? (
+                            <Button 
+                                className='p-[9px_16px] w-full' 
+                                primary 
+                                onClick={handleSubmit}
+                            >
+                                Đặt giá
+                            </Button>
+                        ) : (
+                            <Button 
+                                className='p-[9px_16px] w-full' 
+                                primary 
+                                disable
+                            >
+                                Đã kết thúc đấu giá
+                            </Button>
+                        )}
                     </div>
                 </div>
 

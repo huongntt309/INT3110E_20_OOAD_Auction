@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import Card from '~/components/Card';
@@ -21,6 +21,13 @@ function RoomManagement() {
 
     const [allUsers, setAllUsers] = useState();
     const [allBids, setAllBids] = useState();
+    
+    // Time
+    const [days, setDays] = useState(0);
+    const [hours, setHours] = useState(0);
+    const [minutes, setMinutes] = useState(0);
+    const [seconds, setSeconds] = useState(0);
+    let intervalId = useRef();
     
     const fetchData = () => {
         bidService
@@ -77,25 +84,55 @@ function RoomManagement() {
     
         return value;
     }
+    
+    // Count down
+    const getTime = () => {
+        const end = new Date(`${auction.end_date}T00:00`).getTime();
 
-    const handleVerifyDeposit = (user) => {
-        paymentService
-            .verifyDeposit(user.bid_id)
-            .then((data) => {
-                if (data?.message) {
-                    toast.success(`Xác nhận thanh toán cho User ${user.user_phone_number}`);
-                    fetchData();
-                } else {
-                    toast.error(data?.error);
-                }
-            })
-    } 
+        intervalId = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = end - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(distance % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
+            const minutes = Math.floor(distance % (1000 * 60 * 60) / (1000 * 60));
+            const seconds = Math.floor(distance % (1000 * 60) / 1000);
+
+            if (distance < 0) {
+                // Stop
+                clearInterval(intervalId.current);
+                setDays(0);
+                setHours(0);
+                setMinutes(0);
+                setSeconds(0);
+            } else {
+                // Update time
+                setDays(days);
+                setHours(hours);
+                setMinutes(minutes);
+                setSeconds(seconds);
+            }
+        }, 1000);
+
+        // console.log(`${days} days ${hours} hours ${minutes} minutes ${seconds} seconds `);
+    }
+    
+    useEffect(() => {
+        getTime();
+
+        return () => clearInterval(intervalId.current);
+    });
+
+    // Fetch data every second
+    useEffect(() => {
+        fetchData();
+    }, [seconds]);
 
     return (
         <div className="p-16">
             <div>
                 <Card title='Phòng đấu giá'>
-                    <div className='grid grid-cols-2 text-[20px]'>
+                    <div className='grid grid-cols-[40%_auto] text-[20px]'>
                         <h3>
                             <span>Biển số: </span>
                             <span className='font-semibold'>
@@ -105,8 +142,10 @@ function RoomManagement() {
                         <h3>
                             <span>Thời gian đấu giá còn lại: </span>
                             <span className='font-semibold'>
-                                <span>10 phút </span>
-                                <span>00 giây</span>
+                                <span>{(days >= 10) ? days : `0${days}`} ngày </span>
+                                <span>{(hours >= 10) ? hours : `0${hours}`} giờ </span>
+                                <span>{(minutes >= 10) ? minutes : `0${minutes}`} phút </span>
+                                <span>{(seconds >= 10) ? seconds : `0${seconds}`} giây</span>
                             </span>
                         </h3>
                     </div>
@@ -124,7 +163,7 @@ function RoomManagement() {
                                                 {user && user.bid_status}
                                             </div>
                                         </div>
-                                        {(user.bid_status.toLowerCase() === 'pending') &&
+                                        {/* {(user.bid_status.toLowerCase() === 'pending') &&
                                             <Button
                                                 className='w-[30px] h-[30px] rounded-full'
                                                 onClick={() => handleVerifyDeposit(user)}
@@ -132,7 +171,7 @@ function RoomManagement() {
                                             >
                                                 <FontAwesomeIcon icon={faCheck} />
                                             </Button>
-                                        }
+                                        } */}
                                     </div>
                                 ))}
                             </div>

@@ -30,6 +30,9 @@ const TB_HEADER = [
 ];
 
 function AuctionHistory() {
+    const context = useContext(authUserContext);
+    const user = context && context.authUser?.user;
+    
     // Query
     const [params, setParams] = useSearchParams({ 'page': PAGE });
     const page = Number(params.get('page')) || PAGE;
@@ -46,8 +49,24 @@ function AuctionHistory() {
 
     const fetchData = () => {
         auctionService
-            .getAllItems()
+            .getRegisterItems(user.phone_number)
             .then((data) => {
+                console.log('[WAITING AUCTION]', data);
+                const verifyData = [...data?.Verify];
+                // const pendingData = [...data?.PENDING];
+                if (verifyData.length > 0) {
+                    verifyData.forEach((item) => {
+                        item.status = 'verify';
+                    });
+                }
+                // if (pendingData.length > 0) {
+                //     pendingData.forEach((item) => {
+                //         item.status = 'pending';
+                //     });
+                // }
+                // data = [...verifyData, ...pendingData];
+                data = [...verifyData];
+                console.log('[WAITING AUCTION]', data);
                 const length = Math.ceil(data.length / PER_PAGE);
                 setPageCount(length);
                 return { data, length };
@@ -106,22 +125,23 @@ function AuctionHistory() {
                             <td>{item.plate_id}</td>
                             <td>
                                 <span className={cx('p-[2px_8px] rounded-full', 'status', {
-                                    success: item.auction_status.toLowerCase() === 'đã kết thúc',
-                                    pending: item.auction_status.toLowerCase() === 'đang diễn ra',
+                                    success: item.bid_winner_id === user.phone_number,
                                 })}>
-                                    {item.auction_status}
+                                    {(item.bid_winner_id === user.phone_number) ? 'Đã trúng' : 'Không trúng'}
                                 </span>
                             </td>
                             <td>{inputCurrency((100000000).toString())} VNĐ</td>
                             <td>{inputCurrency((100000000).toString())} VNĐ</td>
                             <td className='flex justify-center'>
-                                <Button 
-                                    className='p-[9px]' 
-                                    primary
-                                    onClick={() => handlePayment(item)}
-                                >
-                                    Thanh toán đấu giá
-                                </Button>
+                                {(item.bid_winner_id === user.phone_number) &&
+                                    <Button 
+                                        className='p-[9px]' 
+                                        primary
+                                        onClick={() => handlePayment(item)}
+                                    >
+                                        Thanh toán
+                                    </Button>
+                                }
                             </td>
                         </tr>
                     ))}
