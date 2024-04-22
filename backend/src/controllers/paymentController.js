@@ -35,7 +35,7 @@ const paymentController = {
             res.status(500).json({ error: 'Internal server error' });
         }
     },
-    
+
     handleAddDeposit: async (req, res) => {
         try {
             const { auction_id, user_phone_number } = req.body;
@@ -104,9 +104,10 @@ const paymentController = {
     // Hàm xử lý cập nhật thông tin của một thanh toán
     handleVerifyPayment: async (req, res) => {
         try {
-            const { id } = req.params;
-            await updatePayment(id, PAYMENT_STATUS_VERIFY);
-            await updateBidStatus(id, BID_STATUS_VERIFY);
+            const { payment_id } = req.params;
+            await updatePayment(payment_id, PAYMENT_STATUS_VERIFY);
+            const payment = await getPaymentById(payment_id)
+            await updateBidStatus(payment.bid_id, BID_STATUS_VERIFY);
 
             res.status(200).json({ message: 'Payment + Bid updated verify successfully' });
         } catch (error) {

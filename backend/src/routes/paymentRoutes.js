@@ -19,7 +19,7 @@ router.post('/payment', paymentController.handleAddPayment);
 router.post('/deposit', paymentController.handleAddDeposit);
 
 // by admin
-router.put('/payment-verify/:id', paymentController.handleVerifyPayment);
+router.put('/payment-verify/:payment_id', paymentController.handleVerifyPayment);
 router.put('/deposit-refund/:id', paymentController.handleRefundDeposit);
 
 
