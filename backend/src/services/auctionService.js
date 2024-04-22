@@ -75,6 +75,31 @@ async function getAuctionsByUser(user_phone_number) {
     }
 }
 
+async function getAllBiddersAndBidPriceByAuctionId(auction_id) {
+    // Select user_phone_number, bidPrice, bid_status with WHERE auction_id = ?, classify 2 types of users by bid_status 
+    const query = 'SELECT user_phone_number, bid_price, bid_status FROM bids WHERE auction_id = ?';
+    try {
+        const rows = await global.db.all(query, [auction_id]);
+        const bidders = {
+            'Verify': [],
+            'PENDING': []
+        };
+
+        rows.forEach(row => {
+            if (row.bid_status === 'Verify') {
+                bidders['Verify'].push({ user_phone_number: row.user_phone_number, bid_price: row.bid_price });
+            } else if (row.bid_status === 'PENDING') {
+                bidders['PENDING'].push({ user_phone_number: row.user_phone_number, bid_price: row.bid_price });
+            }
+        });
+
+        return bidders;
+    } catch (error) {
+        console.error('Error getting bids:', error);
+        return null;
+    }
+};
+
 
 
 // Đọc tất cả các phiên đấu giá
@@ -102,6 +127,8 @@ async function getAllBidsByAuctionId(auction_id) {
         console.error('Error getting bids:', error);
     }
 };
+
+
 
 // Cập nhật thông tin của một phiên đấu giá
 async function updateAuction(auctionId, newData) {
@@ -235,4 +262,5 @@ export {
     getAuctionsByUser,
     updateAllAuctionStatusByTime,
     getAllBidsByAuctionId,
+    getAllBiddersAndBidPriceByAuctionId,
 };
