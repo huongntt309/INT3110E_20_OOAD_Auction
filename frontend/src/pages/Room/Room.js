@@ -29,7 +29,6 @@ function Room() {
 
     const [modal, setModal] = useState();
     const [showModal, setShowModal] = useState(false);
-    const [win, setWin] = useState(false);
 
     // Time
     const [days, setDays] = useState(0);
@@ -162,7 +161,7 @@ function Room() {
     // }
 
     // Show result
-    const showResult = () => {
+    const showResult = (win) => {
         handleShowModal();
         setModal(
             <BidResult 
@@ -216,6 +215,46 @@ function Room() {
     useEffect(() => {
         fetchData();
     }, [seconds]);
+
+    useEffect(() => {
+        if (auction) {
+            if ((auction.auction_status.toLowerCase() === 'đã kết thúc') && auction.bid_winner_id === 'null') {
+                let bid_winner_id = 'null';
+                if (allBids) {
+                    for (let i = 0; i < allBids.length; i++) {
+                        if (allBids[i].bid_status.toLowerCase() === 'verify') {
+                            bid_winner_id = allBids[i].user_phone_number;
+                            break;
+                        }
+                    }
+                }
+                
+                // Update
+                auctionService
+                    .updateItem(
+                        auction.auction_id,
+                        auction.plate_id,
+                        auction.start_date,
+                        auction.end_date,
+                        auction.auction_status,
+                        bid_winner_id,
+                        auction.city,
+                        auction.plate_type,
+                        auction.vehicle_type,
+                    )
+                    .then((data) => {
+                        // console.log('[PRODUCT FORM]', item.auction_id);
+                        if (data?.message) {
+                            // toast.success('Cập nhật thành công!');
+                            console.log('[ROOM]: bid winner', auction);
+                            showResult (bid_winner_id === user.phone_number);
+                        } else {
+                            // toast.error(data?.error);
+                        }
+                    });
+            }
+        }
+    }, [auction]);
 
     return (
         <div className='px-32 py-16'>

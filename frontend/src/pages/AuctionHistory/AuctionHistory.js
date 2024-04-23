@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { authUserContext } from '~/App';
 
 import * as auctionService from '~/services/auctionService';
+import * as bidService from '~/services/bidService';
 
 const cx = classNames.bind(styles);
 
@@ -32,6 +33,7 @@ const TB_HEADER = [
 function AuctionHistory() {
     const context = useContext(authUserContext);
     const user = context && context.authUser?.user;
+    const token = context && context.authUser?.token;
     
     // Query
     const [params, setParams] = useSearchParams({ 'page': PAGE });
@@ -42,7 +44,7 @@ function AuctionHistory() {
     const [showModal, setShowModal] = useState(false);
     const [modal, setModal] = useState();
     const [item, setItem] = useState();
-    // const context = useContext(authUserContext);
+    const [allBids, setAllBids] = useState();
 
     // Pagination
     const [pageCount, setPageCount] = useState();
@@ -66,7 +68,7 @@ function AuctionHistory() {
                 // }
                 // data = [...verifyData, ...pendingData];
                 data = [...verifyData];
-                console.log('[WAITING AUCTION]', data);
+                console.log('[HISTORY AUCTION]: history', data);
                 const length = Math.ceil(data.length / PER_PAGE);
                 setPageCount(length);
                 return { data, length };
@@ -76,7 +78,18 @@ function AuctionHistory() {
                 const startIndex = (page - 1) * perPage;
                 const endIndex = page * perPage;
 
-                setData(data.data.slice(startIndex, endIndex));
+                setData(data.data.reverse().slice(startIndex, endIndex));
+            });
+        bidService
+            .getAllBids(token)
+            .then((data) => {
+                // Sort data: Giảm dần
+                data.sort((a, b) => (b.bid_price - a.bid_price))
+                // Filter data by: auction_id
+                // data = data.filter((bid) => (bid.auction_id === auction.auction_id));
+                console.log('[HISTORY AUCTION]: all bids', data);
+                if (data.length > 0) setAllBids(data);
+                else setAllBids();
             });
     }
 
@@ -114,6 +127,24 @@ function AuctionHistory() {
         setItem(item);
     }
 
+    const getHighestBid = (id) => {
+        const bids = allBids && allBids.filter((bid) => (id === bid.auction_id));
+        return bids && bids[0].bid_price;
+    }
+    
+    const getMyHighestBid = (id) => {
+        const bids = allBids && allBids.filter((bid) => (id === bid.auction_id));
+        if (bids) {
+            for (let i = 0; i < bids.length; i++) {
+                if (user.phone_number === bids[i].user_phone_number) {
+                    return bids[i].bid_price;
+                }
+            }
+        }
+        
+        return 0;
+    }
+
     return (
         <div className="p-16">
             <div>
@@ -130,8 +161,8 @@ function AuctionHistory() {
                                     {(item.bid_winner_id === user.phone_number) ? 'Đã trúng' : 'Không trúng'}
                                 </span>
                             </td>
-                            <td>{inputCurrency((100000000).toString())} VNĐ</td>
-                            <td>{inputCurrency((100000000).toString())} VNĐ</td>
+                            <td>{getHighestBid(item.auction_id) && inputCurrency((getHighestBid(item.auction_id)).toString())} VNĐ</td>
+                            <td>{getMyHighestBid(item.auction_id) && inputCurrency((getMyHighestBid(item.auction_id)).toString())} VNĐ</td>
                             <td className='flex justify-center'>
                                 {(item.bid_winner_id === user.phone_number) &&
                                     <Button 

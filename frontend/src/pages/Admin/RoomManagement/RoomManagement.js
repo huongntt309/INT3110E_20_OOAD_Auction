@@ -10,7 +10,7 @@ import { faCheck, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 
 import * as bidService from '~/services/bidService';
-import * as paymentService from '~/services/paymentService';
+import * as auctionService from '~/services/auctionService';
 
 function RoomManagement() {
     const location = useLocation();
@@ -37,7 +37,7 @@ function RoomManagement() {
                 data.sort((a, b) => (b.bid_price - a.bid_price))
                 // Filter data by: auction_id
                 data = data.filter((bid) => (bid.auction_id === auction.auction_id));
-                console.log('[ROOM]',  data);
+                console.log('[ROOM]', data);
                 if (data.length > 0) setAllBids(data);
                 else setAllBids();
             });
@@ -127,6 +127,45 @@ function RoomManagement() {
     useEffect(() => {
         fetchData();
     }, [seconds]);
+
+    useEffect(() => {
+        if (auction) {
+            if ((auction.auction_status.toLowerCase() === 'đã kết thúc') && auction.bid_winner_id === 'null') {
+                let bid_winner_id = 'null';
+                if (allBids) {
+                    for (let i = 0; i < allBids.length; i++) {
+                        if (allBids[i].bid_status.toLowerCase() === 'verify') {
+                            bid_winner_id = allBids[i].user_phone_number;
+                            break;
+                        }
+                    }
+                }
+                
+                // Update
+                auctionService
+                    .updateItem(
+                        auction.auction_id,
+                        auction.plate_id,
+                        auction.start_date,
+                        auction.end_date,
+                        auction.auction_status,
+                        bid_winner_id,
+                        auction.city,
+                        auction.plate_type,
+                        auction.vehicle_type,
+                    )
+                    .then((data) => {
+                        // console.log('[PRODUCT FORM]', item.auction_id);
+                        if (data?.message) {
+                            // toast.success('Cập nhật thành công!');
+                            console.log('[ROOM]: bid winner', auction);
+                        } else {
+                            // toast.error(data?.error);
+                        }
+                    });
+            }
+        }
+    }, [auction]);
 
     return (
         <div className="p-16">
