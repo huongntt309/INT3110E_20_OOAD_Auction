@@ -44,15 +44,14 @@ function Room() {
                 // Sort data: Giảm dần
                 data.sort((a, b) => (b.bid_price - a.bid_price))
                 // Filter data by: auction_id
-                data = data.filter((bid) => (bid.auction_id === item.auction_id));
+                data = data.filter((bid) => (bid.auction_id === (item && item.auction_id)));
                 console.log('[ROOM]: bids', data);
-                // console.log('[ROOM]: item', item);
                 if (data.length > 0) setAllBids(data.slice(0, 3));
                 else setAllBids();
                 return data;
             });
-        auctionService
-            .getItemById(item.auction_id)
+        item && auctionService
+            .getItemById(item && item.auction_id)
             .then((data) => {
                 console.log('[ROOM]: auction', data);
                 setAuction(data);
@@ -60,7 +59,7 @@ function Room() {
     }
 
     useEffect(() => {
-        if (item) fetchData();
+        fetchData();
     }, []);
     
     const inputCurrency = (value) => {

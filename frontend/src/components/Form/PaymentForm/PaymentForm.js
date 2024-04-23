@@ -5,10 +5,27 @@ import { toast } from 'react-toastify';
 
 import * as paymentService from '~/services/paymentService';
 
-function PaymentForm({ item, onClose }) {
+function PaymentForm({ item, payment, onClose }) {
     const handleSubmit = () => {
         toast.success('Thanh toán thành công!');
+        // console.log('[PAYMENT FORM]', item);
         onClose();
+    }
+
+    const inputCurrency = (value) => {
+        value =  value.replace(/[^0-9\s]/g, '');
+        value =  value.replaceAll(',', '');
+        const len = value.length;
+    
+        let count = 0;
+            
+        for (let i = 1; i <= ((len % 3 === 0) ? Math.floor(len / 3) - 1 : Math.floor(len / 3)); i++) {
+            const position = - (i * 3 + count);
+            value = `${value.slice(0, position)},${value.slice(position)}`;
+            count++;
+        }
+    
+        return value;
     }
 
     return (
@@ -39,7 +56,7 @@ function PaymentForm({ item, onClose }) {
                     </div>
                     <div className='mb-[16px]'>
                         <p className='text-[14px] text-[var(--second-text-color)]'>Số tiền</p>
-                        <p className='font-semibold text-[18px]'>40,000,000 VNĐ</p>
+                        <p className='font-semibold text-[18px]'>{payment && inputCurrency(payment.toString())} VNĐ</p>
                     </div>
                 </div>
             </div>
