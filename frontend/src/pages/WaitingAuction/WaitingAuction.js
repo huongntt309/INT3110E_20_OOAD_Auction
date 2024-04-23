@@ -66,7 +66,7 @@ function WaitingAuction() {
                 const startIndex = (page - 1) * perPage;
                 const endIndex = page * perPage;
 
-                setData(data.data.slice(startIndex, endIndex));
+                setData(data.data.reverse().slice(startIndex, endIndex));
             });
     }
 

@@ -36,8 +36,6 @@ function AuctionForm({ item, onClose = () => {}, updateData = () => {}, service 
                     inputs.plate_id,
                     inputs.start_date,
                     inputs.end_date,
-                    inputs.auction_status,
-                    inputs.bid_winner_id,
                     inputs.city,
                     inputs.plate_type,
                     inputs.vehicle_type,

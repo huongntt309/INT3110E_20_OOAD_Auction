@@ -45,6 +45,7 @@ function AuctionHistory() {
     const [modal, setModal] = useState();
     const [item, setItem] = useState();
     const [allBids, setAllBids] = useState();
+    const [payment, setPayment] = useState(0);
 
     // Pagination
     const [pageCount, setPageCount] = useState();
@@ -125,6 +126,8 @@ function AuctionHistory() {
     const handlePayment = (item) => {
         handleShowModal();
         setItem(item);
+        const payment = getHighestBid(item.auction_id);
+        setPayment(payment);
     }
 
     const getHighestBid = (id) => {
@@ -188,6 +191,7 @@ function AuctionHistory() {
                     <Modal>
                         <PaymentForm 
                             item={item} 
+                            payment={payment}
                             onClose={handleCloseModal} 
                         />
                     </Modal>

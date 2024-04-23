@@ -41,10 +41,10 @@ function Auction() {
         auctionService
             .getAllItems()
             .then((data) => {
-                const length = Math.ceil(data.length / PER_PAGE);
-                setPageCount(length);
                 data = data.filter((item) => 
                     (item.auction_status.toLowerCase() !== 'đã kết thúc'))
+                const length = Math.ceil(data.length / PER_PAGE);
+                setPageCount(length);
                 return { data, length };
             })
             .then((data) => {
@@ -53,7 +53,7 @@ function Auction() {
                 const endIndex = page * perPage;
 
                 console.log('[AUCTION]', data);
-                setData(data.data.slice(startIndex, endIndex));
+                setData(data.data.reverse().slice(startIndex, endIndex));
             });
     }
 

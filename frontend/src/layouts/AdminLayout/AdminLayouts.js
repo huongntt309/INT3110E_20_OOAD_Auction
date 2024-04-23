@@ -8,7 +8,9 @@ function AdminLayout({ children }) {
                 <Header />
                 <div className='mt-[var(--admin-layout-header-height)]'>
                     <Sidebar />
-                    <main className='ml-[var(--admin-layout-sidebar-width)] bg-[var(--background-color)]'>
+                    <main className='ml-[var(--admin-layout-sidebar-width)] bg-[var(--background-color)]' style={{
+                        height: 'max(100%, calc(100vh - var(--admin-layout-header-height)))',
+                    }}>
                         {children}
                     </main>
                 </div>
