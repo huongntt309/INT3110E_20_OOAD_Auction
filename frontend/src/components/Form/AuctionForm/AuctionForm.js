@@ -13,6 +13,7 @@ function AuctionForm({ item, onClose = () => {}, updateData = () => {}, service 
         plate_id: item !== undefined ? item.plate_id : '',
         start_date: item !== undefined ? item.start_date : '',
         end_date: item !== undefined ? item.end_date : '',
+        auction_status: item !== undefined ? item.auction_status : '',
         bid_winner_id: "null",
         city: item !== undefined ? item.city : '',
         plate_type: item !== undefined ? item.plate_type : '',
@@ -41,10 +42,14 @@ function AuctionForm({ item, onClose = () => {}, updateData = () => {}, service 
                     inputs.plate_type,
                     inputs.vehicle_type,
                 )
-                .then(() => {
+                .then((data) => {
                     // console.log('[CREATE]', data);
-                    updateData();
-                    toast.success('Thêm thành công!');
+                    if (data?.message) {
+                        updateData();
+                        toast.success('Thêm thành công!');
+                    } else {
+                        toast.error(data?.error);
+                    }
                 })
         } else {
             // Update
@@ -60,10 +65,14 @@ function AuctionForm({ item, onClose = () => {}, updateData = () => {}, service 
                     inputs.plate_type,
                     inputs.vehicle_type,
                 )
-                .then(() => {
-                    // console.log('[PRODUCT FORM]', item.auction_id, inputs);
-                    updateData();
-                    toast.success('Cập nhật thành công!');
+                .then((data) => {
+                    // console.log('[PRODUCT FORM]', item.auction_id);
+                    if (data?.message) {
+                        updateData();
+                        toast.success('Cập nhật thành công!');
+                    } else {
+                        toast.error(data?.error)
+                    }
                 })
         }
         onClose();

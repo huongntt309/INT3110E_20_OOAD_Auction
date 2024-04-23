@@ -11,14 +11,17 @@ import Modal from '~/components/Modal';
 import AuctionForm from '~/components/Form/AuctionForm';
 import DeleteForm from '~/components/Form/DeleteForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faRotate } from '@fortawesome/free-solid-svg-icons';
 
 import * as paymentService from '~/services/paymentService';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 
 const TB_HEADER = [
     'STT',
+    'Số điện thoại',
+    'Biển số',
     'Loại',
     'Trạng thái',
     'Hành động',
@@ -34,9 +37,9 @@ function DepositManagement() {
     const perPage = PER_PAGE;
 
     const [data, setData] = useState();
-    const [showModal, setShowModal] = useState(false);
-    const [isDelete, setIsDelete] = useState(false);
-    const [item, setItem] = useState();
+    // const [showModal, setShowModal] = useState(false);
+    // const [isDelete, setIsDelete] = useState(false);
+    // const [item, setItem] = useState();
 
     // Pagination
     const [pageCount, setPageCount] = useState();
@@ -46,6 +49,7 @@ function DepositManagement() {
             .getAllPaymentsAdmin()
             .then((data) => {
                 const length = Math.ceil(data.length / PER_PAGE);
+                data = data.filter((item) => (item.payment_type.toLowerCase() === 'deposit'));
                 setPageCount(length);
                 return { data, length };
             })
@@ -54,6 +58,7 @@ function DepositManagement() {
                 const startIndex = (page - 1) * perPage;
                 const endIndex = page * perPage;
 
+                console.log('[DEPOSIT MANAGEMENT]', data);
                 setData(data.data.reverse().slice(startIndex, endIndex));
             });
     }
@@ -64,34 +69,53 @@ function DepositManagement() {
     }, [page]);
 
     // Show modal
-    const handleShowModal = () => {
-        setShowModal(true);
-    }
+    // const handleShowModal = () => {
+    //     setShowModal(true);
+    // }
 
     // Close modal
-    const handleCloseModal = () => {
-        setShowModal(false);
+    // const handleCloseModal = () => {
+    //     setShowModal(false);
+    // }
+
+    const inputPhone = (value) => {
+        value = value.replace(/[^0-9\s]/g, '');
+        value = value.replaceAll(' ', '');
+        const len = value.length;
+    
+        let count = 0;
+    
+        for (let i = 1; i <= ((len % 4 === 0) ? Math.floor(len / 4) - 1 : Math.floor(len / 4)); i++) {
+            const position = i * 4 + count;
+            value = `${value.slice(0, position)} ${value.slice(position)}`;
+            count++;
+        }
+    
+        return value;
     }
 
-    // Add item
-    const handleAdd = () => {
-        setItem();
-        setIsDelete(false);
-        handleShowModal();
+    // Verify item
+    const handleVerify = (item) => {
+        // setItem(item);
+        // setIsDelete(false);
+        // handleShowModal();
+        paymentService
+            .verifyDeposit(item.payment_id)
+            .then((data) => {
+                if (data?.message) {
+                    toast.success(`Xác nhận đặt cọc cho User`);
+                    fetchData();
+                } else {
+                    toast.error(data?.error);
+                }
+            });
     }
 
-    // Edit item
-    const handleEdit = (item) => {
-        setItem(item);
-        setIsDelete(false);
-        handleShowModal();
-    }
-
-    // Delete item
-    const handleDelete = (item) => {
-        setItem(item);
-        setIsDelete(true);
-        handleShowModal();
+    // Refund item
+    const handleRefund = (item) => {
+        // setItem(item);
+        // setIsDelete(true);
+        // handleShowModal();
     }
 
     return (
@@ -100,32 +124,43 @@ function DepositManagement() {
                 <Card title='Đặt cọc'>
                     <Table header={TB_HEADER} fixedLast>
                         {data && data.map((item, index) => (
-                            <tr key={item.auction_id}>
+                            <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{item.payment_type}</td>
+                                <td>{inputPhone(item.user_phone_number)}</td>
+                                <td>{item.plate_id}</td>
+                                <td>
+                                    {(item.payment_type.toLowerCase() === 'deposit') && 'Đặt cọc'}
+                                    {(item.payment_type.toLowerCase() === 'payment for bid winner') && 'Thanh toán'}
+                                </td>
                                 <td>
                                     <span className={cx('p-[2px_8px] rounded-full', 'status', {
                                         success: item.payment_status.toLowerCase() === 'verify',
                                         pending: item.payment_status.toLowerCase() === 'pending',
                                     })}>
-                                        {item.payment_status}
+                                        {(item.payment_status.toLowerCase() === 'verify') && 'Đã xác thực'}
+                                        {(item.payment_status.toLowerCase() === 'pending') && 'Đang xử lý'}
+                                        {(item.payment_status.toLowerCase() === 'refund') && 'Đã hoàn tiền'}
                                     </span>
                                 </td>
                                 <td className='flex justify-center'>
-                                    <Button 
-                                        className='mx-[4px] w-[30px] h-[30px] rounded-full' 
-                                        primary
-                                        onClick={() => handleEdit(item)}
-                                    >
-                                        <FontAwesomeIcon icon={faPen} />
-                                    </Button>
-                                    <Button 
-                                        className='mx-[4px] w-[30px] h-[30px] rounded-full' 
-                                        primary
-                                        onClick={() => handleDelete(item)}
-                                    >
-                                        <FontAwesomeIcon icon={faTrash} />
-                                    </Button>
+                                    {(item.payment_status.toLowerCase() === 'pending') &&
+                                        <Button 
+                                            className='mx-[4px] w-[30px] h-[30px] rounded-full' 
+                                            primary
+                                            onClick={() => handleVerify(item)}
+                                        >
+                                            <FontAwesomeIcon icon={faCheck} />
+                                        </Button>
+                                    }
+                                    {(item.payment_status.toLowerCase() === 'pending') && 
+                                        <Button 
+                                            className='mx-[4px] w-[30px] h-[30px] rounded-full' 
+                                            primary
+                                            onClick={() => handleRefund(item)}
+                                        >
+                                            <FontAwesomeIcon icon={faRotate} />
+                                        </Button>
+                                    }
                                 </td>
                             </tr>
                         ))}
@@ -145,7 +180,7 @@ function DepositManagement() {
                     </Button> */}
                 </Card>
 
-                {showModal &&
+                {/* {showModal &&
                     <Modal>
                         {!isDelete ? (
                             <AuctionForm 
@@ -164,7 +199,7 @@ function DepositManagement() {
                             />
                         )}
                     </Modal>
-                }
+                } */}
             </div>
         </div>
     );

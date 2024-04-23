@@ -9,10 +9,11 @@ export const getAllPaymentsAdmin = async () => {
     }
 };
 
-export const addDeposit = async (bid_id) => {
+export const addDeposit = async (auction_id, user_phone_number) => {
     try {
         const res = await httpRequest.post('deposit', {
-            bid_id,
+            auction_id,
+            user_phone_number,
         });
         return res;
     } catch (error) {

@@ -1,9 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import { useState } from 'react';
 import styles from './SignUp.module.scss';
 
 import Input from '~/components/Input';
 import Button from '~/components/Button';
+import config from '~/config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
@@ -26,6 +28,7 @@ function SignUp() {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showRePassword, setShowRePassword] = useState(false);
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -109,7 +112,7 @@ function SignUp() {
                 )
                 .then((data) => {
                     if (data?.message) {
-                        toast.success(data.message);
+                        toast.success('Đăng ký thành công!');
                         setInputs({
                             phone_number: '',
                             password: '',
@@ -120,6 +123,9 @@ function SignUp() {
                             dob: '',
                             address: '',
                         });
+                        setTimeout(() => {
+                            navigate(config.routes.login);
+                        }, 200);
                     } else if (data?.error) {
                         toast.error(data.error)
                     }

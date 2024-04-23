@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { authUserContext } from '~/App';
 
 import * as auctionService from '~/services/auctionService';
+import * as bidService from '~/services/bidService';
 
 const cx = classNames.bind(styles);
 
@@ -30,6 +31,10 @@ const TB_HEADER = [
 ];
 
 function AuctionHistory() {
+    const context = useContext(authUserContext);
+    const user = context && context.authUser?.user;
+    const token = context && context.authUser?.token;
+    
     // Query
     const [params, setParams] = useSearchParams({ 'page': PAGE });
     const page = Number(params.get('page')) || PAGE;
@@ -39,15 +44,31 @@ function AuctionHistory() {
     const [showModal, setShowModal] = useState(false);
     const [modal, setModal] = useState();
     const [item, setItem] = useState();
-    // const context = useContext(authUserContext);
+    const [allBids, setAllBids] = useState();
 
     // Pagination
     const [pageCount, setPageCount] = useState();
 
     const fetchData = () => {
         auctionService
-            .getAllItems()
+            .getRegisterItems(user.phone_number)
             .then((data) => {
+                console.log('[WAITING AUCTION]', data);
+                const verifyData = [...data?.Verify];
+                // const pendingData = [...data?.PENDING];
+                if (verifyData.length > 0) {
+                    verifyData.forEach((item) => {
+                        item.status = 'verify';
+                    });
+                }
+                // if (pendingData.length > 0) {
+                //     pendingData.forEach((item) => {
+                //         item.status = 'pending';
+                //     });
+                // }
+                // data = [...verifyData, ...pendingData];
+                data = [...verifyData];
+                console.log('[HISTORY AUCTION]: history', data);
                 const length = Math.ceil(data.length / PER_PAGE);
                 setPageCount(length);
                 return { data, length };
@@ -57,7 +78,18 @@ function AuctionHistory() {
                 const startIndex = (page - 1) * perPage;
                 const endIndex = page * perPage;
 
-                setData(data.data.slice(startIndex, endIndex));
+                setData(data.data.reverse().slice(startIndex, endIndex));
+            });
+        bidService
+            .getAllBids(token)
+            .then((data) => {
+                // Sort data: Giảm dần
+                data.sort((a, b) => (b.bid_price - a.bid_price))
+                // Filter data by: auction_id
+                // data = data.filter((bid) => (bid.auction_id === auction.auction_id));
+                console.log('[HISTORY AUCTION]: all bids', data);
+                if (data.length > 0) setAllBids(data);
+                else setAllBids();
             });
     }
 
@@ -95,6 +127,24 @@ function AuctionHistory() {
         setItem(item);
     }
 
+    const getHighestBid = (id) => {
+        const bids = allBids && allBids.filter((bid) => (id === bid.auction_id));
+        return bids && bids[0].bid_price;
+    }
+    
+    const getMyHighestBid = (id) => {
+        const bids = allBids && allBids.filter((bid) => (id === bid.auction_id));
+        if (bids) {
+            for (let i = 0; i < bids.length; i++) {
+                if (user.phone_number === bids[i].user_phone_number) {
+                    return bids[i].bid_price;
+                }
+            }
+        }
+        
+        return 0;
+    }
+
     return (
         <div className="p-16">
             <div>
@@ -106,22 +156,23 @@ function AuctionHistory() {
                             <td>{item.plate_id}</td>
                             <td>
                                 <span className={cx('p-[2px_8px] rounded-full', 'status', {
-                                    success: item.auction_status.toLowerCase() === 'đã kết thúc',
-                                    pending: item.auction_status.toLowerCase() === 'đang diễn ra',
+                                    success: item.bid_winner_id === user.phone_number,
                                 })}>
-                                    {item.auction_status}
+                                    {(item.bid_winner_id === user.phone_number) ? 'Đã trúng' : 'Không trúng'}
                                 </span>
                             </td>
-                            <td>{inputCurrency((100000000).toString())} VNĐ</td>
-                            <td>{inputCurrency((100000000).toString())} VNĐ</td>
+                            <td>{getHighestBid(item.auction_id) && inputCurrency((getHighestBid(item.auction_id)).toString())} VNĐ</td>
+                            <td>{getMyHighestBid(item.auction_id) && inputCurrency((getMyHighestBid(item.auction_id)).toString())} VNĐ</td>
                             <td className='flex justify-center'>
-                                <Button 
-                                    className='p-[9px]' 
-                                    primary
-                                    onClick={() => handlePayment(item)}
-                                >
-                                    Thanh toán đấu giá
-                                </Button>
+                                {(item.bid_winner_id === user.phone_number) &&
+                                    <Button 
+                                        className='p-[9px]' 
+                                        primary
+                                        onClick={() => handlePayment(item)}
+                                    >
+                                        Thanh toán
+                                    </Button>
+                                }
                             </td>
                         </tr>
                     ))}

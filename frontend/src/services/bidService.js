@@ -25,3 +25,15 @@ export const createBid = async (auction_id, user_phone_number, bid_price) => {
         console.log('[BID SERVICE]', error);
     }
 };
+
+export const updateBid = async (bid_id, bid_price, bid_status) => {
+    try {
+        const res = await httpRequest.put(`bid/${bid_id}`, {
+            bid_price,
+            bid_status,
+        });
+        return res;
+    } catch (error) {
+        console.log('[BID SERVICE]', error);
+    }
+};

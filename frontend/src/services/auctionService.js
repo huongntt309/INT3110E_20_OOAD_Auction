@@ -9,12 +9,19 @@ export const getAllItems = async () => {
     }
 }
 
+export const getItemById = async (auction_id) => {
+    try {
+        const res = await httpRequest.get(`auction/${auction_id}`);
+        return res;
+    } catch (error) {
+        console.log('[PRODUCTS SERVICE]', error);
+    }
+}
+
 export const createItem = async (
     plate_id,
     start_date,
     end_date,
-    auction_status,
-    bid_winner_id,
     city,
     plate_type,
     vehicle_type,
@@ -24,8 +31,6 @@ export const createItem = async (
             plate_id,
             start_date,
             end_date,
-            auction_status,
-            bid_winner_id,
             city,
             plate_type,
             vehicle_type,

@@ -22,6 +22,9 @@ const PAGE = 1;
 const PER_PAGE = 8;
 
 function WaitingAuction() {
+    const context = useContext(authUserContext);
+    const user = context && context.authUser?.user;
+
     // Query
     const [params, setParams] = useSearchParams({ 'page': PAGE });
     const page = Number(params.get('page')) || PAGE;
@@ -30,8 +33,6 @@ function WaitingAuction() {
     const [data, setData] = useState();
     const [showModal, setShowModal] = useState(false);
     const [item, setItem] = useState();
-    const context = useContext(authUserContext);
-    const user = context && context.authUser?.user;
 
     // Pagination
     const [pageCount, setPageCount] = useState();
@@ -40,20 +41,22 @@ function WaitingAuction() {
         auctionService
             .getRegisterItems(user.phone_number)
             .then((data) => {
+                console.log('[WAITING AUCTION]', data);
                 const verifyData = [...data?.Verify];
-                const pendingData = [...data?.PENDING];
+                // const pendingData = [...data?.PENDING];
                 if (verifyData.length > 0) {
                     verifyData.forEach((item) => {
                         item.status = 'verify';
                     });
                 }
-                if (pendingData.length > 0) {
-                    pendingData.forEach((item) => {
-                        item.status = 'pending';
-                    });
-                }
-                data = [...verifyData, ...pendingData];
-                console.log(data);
+                // if (pendingData.length > 0) {
+                //     pendingData.forEach((item) => {
+                //         item.status = 'pending';
+                //     });
+                // }
+                // data = [...verifyData, ...pendingData];
+                data = [...verifyData];
+                console.log('[WAITING AUCTION]', data);
                 const length = Math.ceil(data.length / PER_PAGE);
                 setPageCount(length);
                 return { data, length };
@@ -93,7 +96,7 @@ function WaitingAuction() {
         var millisBetween = end.getTime() - now;
         var days = millisBetween / (1000 * 3600 * 24);
 
-        return Math.round(days);
+        return (Math.round(days) > 0 ? Math.round(days) : 0);
     }
 
     return (
@@ -125,17 +128,24 @@ function WaitingAuction() {
                                 </div>
                             </div>
                             <div className='flex flex-col items-center mt-4'>
-                                <Button 
-                                    className='flex justify-center p-[9px_16px] mt-4 w-full' 
-                                    to={config.routes.room} 
-                                    state={item} 
-                                    primary
-                                    onClick={() => {
-                                        // handleDeposit();
-                                    }}
-                                >
-                                    Tham gia đấu giá
-                                </Button>
+                                {(item.auction_status.toLowerCase() === 'đang diễn ra') ? (
+                                    <Button 
+                                        className='flex justify-center p-[9px_16px] mt-4 w-full' 
+                                        to={config.routes.room} 
+                                        state={item} 
+                                        primary
+                                    >
+                                        Tham gia đấu giá
+                                    </Button>
+                                ) : (
+                                    <Button 
+                                        className='flex justify-center p-[9px_16px] mt-4 w-full' 
+                                        primary
+                                        disable
+                                    >
+                                        Đã kết thúc đấu giá
+                                    </Button>
+                                )}
                                 <Button 
                                     className='mt-4 text-[var(--primary)] font-normal' 
                                     onClick={() => showDetail(item)}
